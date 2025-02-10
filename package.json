@@ -1,0 +1,48 @@
+{
+  "name": "habesha-datepicker",
+  "version": "0.0.1",
+  "description": "An Ethiopian date picker component designed for React applications.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bahirumulugeta/habesha-date-picker.git"
+  },
+  "keywords": [
+    "Ethiopian",
+    "Habesha",
+    "Date",
+    "Picker"
+  ],
+  "author": "Bahiru Mulugeta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bahirumulugeta/habesha-date-picker.git/issues"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.3",
+    "@mui/x-date-pickers": "^6.7.0",
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "homepage": "https://github.com/Bahirumulugeta/habesha-date-picker.git#readme",
+  "devDependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.6",
+    "@mui/material": "^5.14.6",
+    "@mui/x-date-pickers": "^6.11.2",
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2"
+  }
+}
