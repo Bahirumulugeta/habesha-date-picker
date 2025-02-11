@@ -38,7 +38,7 @@ const EtGrDateCalendar = () => {
 
   // const { disableEt, disableGregorian } = useEtLocalization();
   const disableEt = dateType === "EN";
-  const disableGregorian = dateType === "AMH";
+  const disableGregorian = dateType === "EC";
   return (
     <Box sx={{ minWidth: !disableEt && !disableGregorian ? 610 : undefined }}>
       <Box display={"flex"}>

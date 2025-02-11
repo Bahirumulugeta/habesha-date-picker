@@ -25,7 +25,7 @@ const EtGrDateCalendar = () => {
     };
     // const { disableEt, disableGregorian } = useEtLocalization();
     const disableEt = dateType === "EN";
-    const disableGregorian = dateType === "AMH";
+    const disableGregorian = dateType === "EC";
     return (react_2.default.createElement(material_1.Box, { sx: { minWidth: !disableEt && !disableGregorian ? 610 : undefined } },
         react_2.default.createElement(material_1.Box, { display: "flex" },
             !disableEt && (react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", mr: disableGregorian ? 2 : 1 },

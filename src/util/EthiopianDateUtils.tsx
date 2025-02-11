@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 
-export type DateType = "EN" | "AMH" | "AO" | "CUSTOM";
+export type DateType = "EN" | "EC" | "AO" | "CUSTOM";
 
-// export type EtLocal = "AMH" | "AO" | "CUSTOM";
+// export type EtLocal = "EC" | "AO" | "CUSTOM";
 
 export namespace EthiopianDate {
   export const shortDays = ["ሰ", "ማ", "ረ", "ሐ", "ዓ", "ቅ", "እ"];
@@ -215,7 +215,7 @@ export namespace EthiopianDate {
   ) {
     let month = "";
     switch (locale) {
-      case "AMH":
+      case "EC":
         month = getEtMonthName(dt.Month);
         break;
       case "AO":
@@ -242,12 +242,12 @@ export namespace EthiopianDate {
 
   export function getEtMonthName(
     m: number,
-    locale: DateType = "AMH",
+    locale: DateType = "EC",
     getLocalMonth?: (month: number) => string
   ): string {
     if (m > 0 && m <= 13) {
       switch (locale) {
-        case "AMH":
+        case "EC":
           return ethMonths[m - 1];
         case "AO":
           return AoMonths[m - 1];

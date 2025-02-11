@@ -36,11 +36,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useEtLocalization = exports.EtLocalizationProvider = void 0;
 const react_1 = __importStar(require("react"));
 const defaultState = {
-    localType: "AMH",
+    localType: "EC",
     setLocalType: () => { },
 };
 const EtLocalizationContext = (0, react_1.createContext)(defaultState);
-const EtLocalizationProvider = ({ children, locale = "AMH", getLocalMonthName, disableEt, disableGregorian, disableSwitcher, }) => {
+const EtLocalizationProvider = ({ children, locale = "EC", getLocalMonthName, disableEt, disableGregorian, disableSwitcher, }) => {
     const [localType, setLocalType] = (0, react_1.useState)(locale);
     (0, react_1.useEffect)(() => {
         setLocalType(locale);
@@ -59,7 +59,7 @@ const useEtLocalization = () => {
     const context = (0, react_1.useContext)(EtLocalizationContext);
     if (context)
         return context;
-    const local = "AMH";
+    const local = "EC";
     return {
         localType: local,
         getLocalMonthName: (m) => "",

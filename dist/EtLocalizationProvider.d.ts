@@ -18,7 +18,7 @@ export type LocalizationProviderProps = {
 };
 export declare const EtLocalizationProvider: React.FC<LocalizationProviderProps>;
 export declare const useEtLocalization: () => LocalizationContextProps | {
-    localType: "AMH";
+    localType: "EC";
     getLocalMonthName: (m: number) => string;
     disableEt: boolean;
     disableGregorian: boolean;

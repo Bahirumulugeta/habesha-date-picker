@@ -18,7 +18,7 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   const cellSize = "36px";
   const gap = 0.5;
   const days =
-    localType === "AMH" || localType === "EN"
+    localType === "EC" || localType === "EN"
       ? EthiopianDate.shortDays
       : EthiopianDate.englishShortDays;
   const today = EthiopianDate.toEth(new Date());

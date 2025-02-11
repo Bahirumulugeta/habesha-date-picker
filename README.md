@@ -86,7 +86,7 @@ Use the EtLocalizationProvider to wrap your entire application or just the secti
 
 function MyApp({ children }) {
   return (
-    <EtLocalizationProvider localType="AMH">
+    <EtLocalizationProvider localType="EC">
       {children}
     </EtLocalizationProvider>
   );
@@ -95,7 +95,7 @@ function MyApp({ children }) {
 #### 3. Configure the Localization Provider:
 The EtLocalizationProvider accepts the following props to configure the localization:
 
-`localType:` This can be set to "AMH" (Amharic), "AO" (Afan Oromo), or "CUSTOM". It defines the type of localization you want to apply. "AMH" and "AO" are predefined localizations, while "CUSTOM" allows for more personalized configurations.
+`localType:` This can be set to "EC" (Amharic), "AO" (Afan Oromo), or "CUSTOM". It defines the type of localization you want to apply. "EC" and "AO" are predefined localizations, while "CUSTOM" allows for more personalized configurations.
 
 `getLocalMonthName:` This optional function is used only when localType is set to "CUSTOM". It allows you to provide a custom function to return the name of the month based on the month number.
 

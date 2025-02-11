@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EthiopianDate = void 0;
 const date_fns_1 = require("date-fns");
-// export type EtLocal = "AMH" | "AO" | "CUSTOM";
+// export type EtLocal = "EC" | "AO" | "CUSTOM";
 var EthiopianDate;
 (function (EthiopianDate) {
     EthiopianDate.shortDays = ["ሰ", "ማ", "ረ", "ሐ", "ዓ", "ቅ", "እ"];
@@ -180,7 +180,7 @@ var EthiopianDate;
         var _a;
         let month = "";
         switch (locale) {
-            case "AMH":
+            case "EC":
                 month = getEtMonthName(dt.Month);
                 break;
             case "AO":
@@ -202,11 +202,11 @@ var EthiopianDate;
         return `${getEtMonthName(dt.Month)} ${dt.Day}/${dt.Year}`;
     }
     EthiopianDate.formatGrDateToEtDate = formatGrDateToEtDate;
-    function getEtMonthName(m, locale = "AMH", getLocalMonth) {
+    function getEtMonthName(m, locale = "EC", getLocalMonth) {
         var _a;
         if (m > 0 && m <= 13) {
             switch (locale) {
-                case "AMH":
+                case "EC":
                     return EthiopianDate.ethMonths[m - 1];
                 case "AO":
                     return EthiopianDate.AoMonths[m - 1];

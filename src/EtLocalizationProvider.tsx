@@ -17,7 +17,7 @@ type LocalizationContextProps = {
 };
 
 const defaultState: LocalizationContextProps = {
-  localType: "AMH",
+  localType: "EC",
   setLocalType: () => {},
 };
 
@@ -35,7 +35,7 @@ export type LocalizationProviderProps = {
 
 export const EtLocalizationProvider: React.FC<LocalizationProviderProps> = ({
   children,
-  locale = "AMH",
+  locale = "EC",
   getLocalMonthName,
   disableEt,
   disableGregorian,
@@ -67,7 +67,7 @@ export const useEtLocalization = () => {
   const context = useContext(EtLocalizationContext);
 
   if (context) return context;
-  const local: DateType = "AMH";
+  const local: DateType = "EC";
   return {
     localType: local,
     getLocalMonthName: (m: number) => "",
