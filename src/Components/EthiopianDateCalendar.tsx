@@ -13,7 +13,17 @@ import { EtDatePickerContext } from "../EtDatePickerContext";
 import { EthiopianDate } from "../util/EthiopianDateUtils";
 import { useEtLocalization } from "../EtLocalizationProvider";
 
-const EthiopianDateCalendar = () => {
+interface EthiopianDateCalendarProps {
+  isRange?: boolean;
+  startDate?: Date | null;
+  endDate?: Date | null;
+}
+
+const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
+  isRange,
+  startDate,
+  endDate,
+}) => {
   const { value, monthValue, setGregDate, gregDate } =
     useContext(EtDatePickerContext);
   const today = EthiopianDate.toEth(new Date());

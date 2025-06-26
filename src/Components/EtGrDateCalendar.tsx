@@ -1,11 +1,43 @@
 import { Box, Button, Divider } from "@mui/material";
-import { DateCalendar } from "@mui/x-date-pickers";
+import { DateCalendar, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 
 import { useContext, useEffect, useState } from "react";
 import EthiopianDateCalendar from "./EthiopianDateCalendar";
 import { EtDatePickerContext } from "../EtDatePickerContext";
 import React from "react";
 import { useEtLocalization } from "../EtLocalizationProvider";
+import { styled } from "@mui/material/styles";
+import { DayCalendarProps } from '@mui/x-date-pickers/internals';
+
+interface CustomPickerDayProps extends PickersDayProps<Date> {
+  isRangeStart?: boolean;
+  isRangeEnd?: boolean;
+  inRange?: boolean;
+}
+
+// Styled component for the date range
+const StyledDay = styled(PickersDay as React.ComponentType<PickersDayProps<Date>>)<CustomPickerDayProps>(({ theme, isRangeStart, isRangeEnd, inRange }) => ({
+  ...(inRange && {
+    backgroundColor: theme.palette.action.selected, // A light background for dates within the range
+    borderRadius: 0, // Make it a rectangle for continuous range
+  }),
+  ...(isRangeStart && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderTopLeftRadius: '50%', // Round corners for start of range
+    borderBottomLeftRadius: '50%',
+  }),
+  ...(isRangeEnd && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderTopRightRadius: '50%', // Round corners for end of range
+    borderBottomRightRadius: '50%',
+  }),
+  // Override default PickersDay styles if needed
+  '&:hover': {
+    backgroundColor: isRangeStart || isRangeEnd ? theme.palette.primary.dark : inRange ? theme.palette.action.hover : undefined,
+  },
+}));
 
 const EtGrDateCalendar = () => {
   const etDatePickerContext = useContext(EtDatePickerContext);
@@ -54,7 +86,7 @@ const EtGrDateCalendar = () => {
             flexDirection="column"
             mr={disableGregorian ? 2 : 1}
           >
-            <EthiopianDateCalendar />
+            <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
           </Box>
         )}
         {!disableEt && !disableGregorian && (
@@ -63,7 +95,7 @@ const EtGrDateCalendar = () => {
         {!disableGregorian && (
           <Box width={295} mr={disableEt ? 2 : 0}>
             <Box width={295} pr={4}>
-              <DateCalendar
+              <DateCalendar<Date>
                 monthsPerRow={3}
                 value={isRange ? startDate : gregDatePicker}
                 onChange={(date) => {
@@ -91,6 +123,15 @@ const EtGrDateCalendar = () => {
                 disablePast={disablePast}
                 minDate={minDate}
                 maxDate={maxDate}
+                slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
+                slotProps={{
+                  day: (ownerState) => ({
+                    ...ownerState,
+                    isRangeStart: isRange && startDate && ownerState.day.getTime() === startDate.getTime(),
+                    isRangeEnd: isRange && endDate && ownerState.day.getTime() === endDate.getTime(),
+                    inRange: isRange && startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
+                  }),
+                }}
               />
             </Box>
           </Box>

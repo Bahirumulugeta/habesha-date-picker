@@ -42,7 +42,7 @@ const EthiopianDaysList = ({ month, year, }) => {
     const { localType } = (0, EtLocalizationProvider_1.useEtLocalization)();
     const cellSize = "36px";
     const gap = 0.5;
-    const days = localType === "EC" || localType === "EN"
+    const days = localType === "EC" || localType === "GC"
         ? EthiopianDateUtils_1.EthiopianDate.shortDays
         : EthiopianDateUtils_1.EthiopianDate.englishShortDays;
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());

@@ -8,11 +8,17 @@ import { useEtLocalization } from "../EtLocalizationProvider";
 type EthiopianDaysListProps = {
   month: number;
   year: number;
+  isRange?: boolean;
+  startDate?: Date | null;
+  endDate?: Date | null;
 };
 
 const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   month,
   year,
+  isRange,
+  startDate,
+  endDate,
 }) => {
   const { localType } = useEtLocalization();
   const cellSize = "36px";
@@ -76,8 +82,8 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   };
 
   useEffect(() => {
-    if (value) setSelectedDate(EthiopianDate.toEth(value));
-  }, [value]);
+    if (value && !isRange) setSelectedDate(EthiopianDate.toEth(value));
+  }, [value, isRange]);
 
   const isSelectedDate = (day: number): boolean => {
     return (
@@ -85,6 +91,21 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
       month === selectedDate?.Month &&
       year === selectedDate?.Year
     );
+  };
+
+  const isRangeStart = (day: number): boolean => {
+    const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
+    return !!(isRange && startDate && currentDayGregorian.getTime() === startDate.getTime());
+  };
+
+  const isRangeEnd = (day: number): boolean => {
+    const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
+    return !!(isRange && endDate && currentDayGregorian.getTime() === endDate.getTime());
+  };
+
+  const inRange = (day: number): boolean => {
+    const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
+    return !!(isRange && startDate && endDate && currentDayGregorian.getTime() > startDate.getTime() && currentDayGregorian.getTime() < endDate.getTime());
   };
 
   return (
@@ -125,50 +146,83 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
           {
             length: EthiopianDate.ethiopianMonthLength(month, year),
           },
-          (_, index) => (
-            <IconButton
-              key={index}
-              disabled={isDisabled(index + 1)}
-              onClick={() => {
-                setSelectedDate(getEtDate(index + 1));
-                const etDate = EthiopianDate.createEthiopianDateFromParts(
-                  index + 1,
-                  month,
-                  year
-                );
-                const grDate = EthiopianDate.toGreg(etDate);
-                onDateChange(grDate);
-                setGregDate(grDate);
-              }}
-              sx={{
-                width: cellSize,
-                height: cellSize,
-                backgroundColor: isSelectedDate(index + 1)
-                  ? "primary.dark"
-                  : "transparent",
-                border:
-                  index + 1 === today.Day &&
-                  month === today.Month &&
-                  year === today.Year &&
-                  !isSelectedDate(index + 1)
-                    ? "1px solid grey"
-                    : "none",
-                gridColumn:
-                  index === 0
-                    ? EthiopianDate.getEtMonthStartDate(month, year)
-                    : undefined,
-                color: isSelectedDate(index + 1) ? "white" : "black",
-                fontSize: "12px",
-                "&:hover": {
-                  backgroundColor: isSelectedDate(index + 1)
-                    ? "primary.dark"
-                    : undefined,
-                },
-              }}
-            >
-              {index + 1}
-            </IconButton>
-          )
+          (_, index) => {
+            const day = index + 1;
+            const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
+
+            return (
+              <IconButton
+                key={index}
+                disabled={isDisabled(day)}
+                onClick={() => {
+                  if (isRange) {
+                    if (!startDate || (startDate && endDate)) {
+                      onDateChange([currentDayGregorian, null]);
+                    } else if (currentDayGregorian.getTime() < startDate.getTime()) {
+                      onDateChange([currentDayGregorian, startDate]);
+                    } else {
+                      onDateChange([startDate, currentDayGregorian]);
+                    }
+                  } else {
+                    setSelectedDate(getEtDate(day));
+                    onDateChange(currentDayGregorian);
+                    setGregDate(currentDayGregorian);
+                  }
+                }}
+                sx={{
+                  width: cellSize,
+                  height: cellSize,
+                  backgroundColor:
+                    isRangeStart(day)
+                      ? "primary.main"
+                      : isRangeEnd(day)
+                      ? "primary.main"
+                      : inRange(day)
+                      ? "action.selected"
+                      : isSelectedDate(day)
+                      ? "primary.dark"
+                      : "transparent",
+                  borderRadius:
+                    isRangeStart(day)
+                      ? "50% 0 0 50%"
+                      : isRangeEnd(day)
+                      ? "0 50% 50% 0"
+                      : inRange(day)
+                      ? "0"
+                      : "50%",
+                  color:
+                    isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
+                  border:
+                    day === today.Day &&
+                    month === today.Month &&
+                    year === today.Year &&
+                    !isSelectedDate(day) &&
+                    !isRangeStart(day) &&
+                    !isRangeEnd(day) &&
+                    !inRange(day)
+                      ? "1px solid grey"
+                      : "none",
+                  gridColumn:
+                    index === 0
+                      ? EthiopianDate.getEtMonthStartDate(month, year)
+                      : undefined,
+                  fontSize: "12px",
+                  "&:hover": {
+                    backgroundColor:
+                      isRangeStart(day) || isRangeEnd(day)
+                        ? "primary.dark"
+                        : inRange(day)
+                        ? "action.hover"
+                        : isSelectedDate(day)
+                        ? "primary.dark"
+                        : undefined,
+                  },
+                }}
+              >
+                {day}
+              </IconButton>
+            );
+          }
         )}
       </Box>
     </>

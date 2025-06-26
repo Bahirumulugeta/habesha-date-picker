@@ -68,6 +68,12 @@ const EtDatePicker: React.FC<EtDatePickerProps> = ({
       setStartDate(sDate);
       setEndDate(eDate);
       onChange?.([sDate, eDate]);
+
+      // Close the modal if both start and end dates are selected
+      if (sDate && eDate) {
+        setAnchorEl(null);
+      }
+
     } else {
       setDate(newValue as Date | null);
       onChange?.(newValue as Date | null);
