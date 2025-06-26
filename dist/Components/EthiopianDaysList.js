@@ -48,6 +48,7 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
     const { onDateChange, setGregDate, value, disableFuture, disablePast, minDate, maxDate, } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const [selectedDate, setSelectedDate] = (0, react_1.useState)(value ? EthiopianDateUtils_1.EthiopianDate.toEth(value) : null);
+    const [hoveredEtDate, setHoveredEtDate] = (0, react_1.useState)(null);
     const getEtDate = (day) => {
         return { Day: day, Month: month, Year: year };
     };
@@ -89,8 +90,19 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
         return !!(isRange && endDate && currentDayGregorian.getTime() === endDate.getTime());
     };
     const inRange = (day) => {
+        if (!isRange || !startDate)
+            return false;
         const currentDayGregorian = EthiopianDateUtils_1.EthiopianDate.toGreg(getEtDate(day));
-        return !!(isRange && startDate && endDate && currentDayGregorian.getTime() > startDate.getTime() && currentDayGregorian.getTime() < endDate.getTime());
+        const startMs = startDate.getTime();
+        if (endDate) {
+            const endMs = endDate.getTime();
+            return currentDayGregorian.getTime() > Math.min(startMs, endMs) && currentDayGregorian.getTime() < Math.max(startMs, endMs);
+        }
+        else if (hoveredEtDate) {
+            const hoveredMs = EthiopianDateUtils_1.EthiopianDate.toGreg(hoveredEtDate).getTime();
+            return currentDayGregorian.getTime() > Math.min(startMs, hoveredMs) && currentDayGregorian.getTime() < Math.max(startMs, hoveredMs);
+        }
+        return false;
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { sx: {
@@ -131,6 +143,15 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
                         onDateChange(currentDayGregorian);
                         setGregDate(currentDayGregorian);
                     }
+                    setHoveredEtDate(null); // Clear hovered date on selection
+                }, onMouseEnter: () => {
+                    if (isRange && startDate && !endDate) {
+                        setHoveredEtDate(getEtDate(day));
+                    }
+                }, onMouseLeave: () => {
+                    if (isRange && startDate && !endDate) {
+                        setHoveredEtDate(null);
+                    }
                 }, sx: {
                     width: cellSize,
                     height: cellSize,
@@ -158,22 +179,18 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
                         !isRangeStart(day) &&
                         !isRangeEnd(day) &&
                         !inRange(day)
-                        ? "1px solid grey"
+                        ? `1px solid ${today.Month === month && today.Year === year ? 'primary.main' : 'transparent'}`
                         : "none",
-                    gridColumn: index === 0
-                        ? EthiopianDateUtils_1.EthiopianDate.getEtMonthStartDate(month, year)
-                        : undefined,
-                    fontSize: "12px",
                     "&:hover": {
-                        backgroundColor: isRangeStart(day) || isRangeEnd(day)
+                        backgroundColor: (isRangeStart(day) || isRangeEnd(day))
                             ? "primary.dark"
                             : inRange(day)
                                 ? "action.hover"
-                                : isSelectedDate(day)
-                                    ? "primary.dark"
-                                    : undefined,
+                                : undefined,
+                        color: isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                     },
-                } }, day));
+                } },
+                react_1.default.createElement(material_1.Typography, { variant: "body2" }, day)));
         }))));
 };
 exports.default = EthiopianDaysList;

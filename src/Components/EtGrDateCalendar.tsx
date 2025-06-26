@@ -165,7 +165,7 @@ const EtGrDateCalendar = () => {
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>End Date</Typography>
                 <DateCalendar<Date>
                   monthsPerRow={3}
-                  value={endDate}
+                  value={endDate || endMonth}
                   onChange={(date) => {
                     if (date) {
                       if (!startDate || (startDate && endDate)) {

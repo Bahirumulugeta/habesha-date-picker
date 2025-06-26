@@ -33,6 +33,7 @@ const EtGrDateCalendar = () => {
     const etDatePickerContext = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const { onDateChange, disableFuture, disablePast, minDate, maxDate, onMonthChange, gregDate, setGregDate, dateType, isRange, startDate, endDate, } = etDatePickerContext;
     const [gregDatePicker, setGregDatePicker] = (0, react_1.useState)(gregDate || null);
+    const [hoveredDate, setHoveredDate] = (0, react_1.useState)(null);
     const [startMonth, setStartMonth] = (0, react_1.useState)(startDate || gregDate || new Date());
     const [endMonth, setEndMonth] = (0, react_1.useState)(startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : gregDate ? new Date(gregDate.getFullYear(), gregDate.getMonth() + 1, 1) : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
     (0, react_1.useEffect)(() => {
@@ -73,24 +74,74 @@ const EtGrDateCalendar = () => {
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "Start Date"),
                 react_2.default.createElement(x_date_pickers_1.DateCalendar, { monthsPerRow: 3, value: startDate, onChange: (date) => {
                         if (date) {
-                            etDatePickerContext.onDateChange([date, endDate]);
+                            if (!startDate || (startDate && endDate)) {
+                                etDatePickerContext.onDateChange([date, null]);
+                            }
+                            else if (date.getTime() < startDate.getTime()) {
+                                etDatePickerContext.onDateChange([date, startDate]);
+                            }
+                            else {
+                                etDatePickerContext.onDateChange([startDate, date]);
+                            }
+                            setHoveredDate(null); // Clear hovered date on selection
                         }
                     }, disableFuture: disableFuture, onMonthChange: (date) => {
                         setStartMonth(date);
+                        setHoveredDate(null); // Clear hovered date on month change
                     }, disablePast: disablePast, minDate: minDate, maxDate: maxDate, slots: { day: StyledDay }, slotProps: {
-                        day: (ownerState) => (Object.assign(Object.assign({}, ownerState), { isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(), isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(), inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime() })),
+                        day: (ownerState) => {
+                            const isRangeStart = startDate && ownerState.day.getTime() === startDate.getTime();
+                            const isRangeEnd = endDate && ownerState.day.getTime() === endDate.getTime();
+                            const isInRange = (startDate &&
+                                ((endDate && ownerState.day.getTime() > Math.min(startDate.getTime(), endDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), endDate.getTime())) ||
+                                    (!endDate && hoveredDate && ownerState.day.getTime() > Math.min(startDate.getTime(), hoveredDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), hoveredDate.getTime()))));
+                            return Object.assign(Object.assign({}, ownerState), { isRangeStart: isRangeStart, isRangeEnd: isRangeEnd, inRange: isInRange, onMouseEnter: () => {
+                                    if (isRange && startDate && !endDate) {
+                                        setHoveredDate(ownerState.day);
+                                    }
+                                }, onMouseLeave: () => {
+                                    if (isRange && startDate && !endDate) {
+                                        setHoveredDate(null);
+                                    }
+                                } });
+                        },
                     }, openTo: "day", views: ['month', 'year', 'day'] })),
             react_2.default.createElement(material_1.Divider, { orientation: "vertical", flexItem: true }),
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", ml: 1, pr: 4 },
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "End Date"),
                 react_2.default.createElement(x_date_pickers_1.DateCalendar, { monthsPerRow: 3, value: endDate, onChange: (date) => {
                         if (date) {
-                            etDatePickerContext.onDateChange([startDate, date]);
+                            if (!startDate || (startDate && endDate)) {
+                                etDatePickerContext.onDateChange([date, null]);
+                            }
+                            else if (date.getTime() < startDate.getTime()) {
+                                etDatePickerContext.onDateChange([date, startDate]);
+                            }
+                            else {
+                                etDatePickerContext.onDateChange([startDate, date]);
+                            }
+                            setHoveredDate(null); // Clear hovered date on selection
                         }
                     }, disableFuture: disableFuture, onMonthChange: (date) => {
                         setEndMonth(date);
+                        setHoveredDate(null); // Clear hovered date on month change
                     }, disablePast: disablePast, minDate: minDate, maxDate: maxDate, slots: { day: StyledDay }, slotProps: {
-                        day: (ownerState) => (Object.assign(Object.assign({}, ownerState), { isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(), isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(), inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime() })),
+                        day: (ownerState) => {
+                            const isRangeStart = startDate && ownerState.day.getTime() === startDate.getTime();
+                            const isRangeEnd = endDate && ownerState.day.getTime() === endDate.getTime();
+                            const isInRange = (startDate &&
+                                ((endDate && ownerState.day.getTime() > Math.min(startDate.getTime(), endDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), endDate.getTime())) ||
+                                    (!endDate && hoveredDate && ownerState.day.getTime() > Math.min(startDate.getTime(), hoveredDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), hoveredDate.getTime()))));
+                            return Object.assign(Object.assign({}, ownerState), { isRangeStart: isRangeStart, isRangeEnd: isRangeEnd, inRange: isInRange, onMouseEnter: () => {
+                                    if (isRange && startDate && !endDate) {
+                                        setHoveredDate(ownerState.day);
+                                    }
+                                }, onMouseLeave: () => {
+                                    if (isRange && startDate && !endDate) {
+                                        setHoveredDate(null);
+                                    }
+                                } });
+                        },
                     }, openTo: "day", views: ['month', 'year', 'day'] }))))) : (
         // Single date mode
         react_2.default.createElement(react_2.default.Fragment, null,
