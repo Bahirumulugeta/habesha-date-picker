@@ -19,25 +19,30 @@ const EtGrDateCalendar = () => {
     gregDate,
     setGregDate,
     dateType,
+    isRange,
+    startDate,
+    endDate,
   } = etDatePickerContext;
 
   const gregDateValue = gregDate?.toLocaleDateString();
 
-  const [gregDatePicker, setGregDatePicker] = useState<Date | null>(null);
+  const [gregDatePicker, setGregDatePicker] = useState<Date | null | undefined>(undefined);
 
   useEffect(() => {
-    if (gregDateValue) {
+    if (isRange) {
+      setGregDatePicker(startDate);
+    } else if (gregDateValue) {
       const value = new Date(gregDateValue);
       setGregDatePicker(value);
     }
-  }, [gregDateValue]);
+  }, [gregDateValue, isRange, startDate]);
 
   const handleTodayButtonClick = () => {
     onDateChange(new Date());
   };
 
   // const { disableEt, disableGregorian } = useEtLocalization();
-  const disableEt = dateType === "EN";
+  const disableEt = dateType === "GC";
   const disableGregorian = dateType === "EC";
   return (
     <Box sx={{ minWidth: !disableEt && !disableGregorian ? 610 : undefined }}>
@@ -60,9 +65,21 @@ const EtGrDateCalendar = () => {
             <Box width={295} pr={4}>
               <DateCalendar
                 monthsPerRow={3}
-                value={gregDatePicker}
+                value={isRange ? startDate : gregDatePicker}
                 onChange={(date) => {
-                  if (date && date instanceof Date) onDateChange(date);
+                  if (date && date instanceof Date) {
+                    if (isRange) {
+                      if (!startDate || (startDate && endDate)) {
+                        etDatePickerContext.onDateChange([date, null]);
+                      } else if (date.getTime() < startDate.getTime()) {
+                        etDatePickerContext.onDateChange([date, startDate]);
+                      } else {
+                        etDatePickerContext.onDateChange([startDate, date]);
+                      }
+                    } else {
+                      onDateChange(date);
+                    }
+                  }
                 }}
                 disableFuture={disableFuture}
                 onMonthChange={(date) => {

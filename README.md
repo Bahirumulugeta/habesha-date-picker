@@ -1,12 +1,11 @@
-
 # Habesha Date DatePicker
 
 Current Version: 0.0.1
 
 `habesha-datepicker` is a React component for selecting Ethiopian dates. It's built on top of Material-UI and provides a culturally tailored date picker experience integrated seamlessly with other MUI components.
 
-![Screenshot of DatePicker](https://drive.google.com/uc?export=view&id=1F59_kA2MBtQuczFLYWo1-e527uPvn0yt)
-
+![Screenshot of DatePicker](YOUR_IMAGE_LINK_HERE)
+Replace `YOUR_IMAGE_LINK_HERE` with the actual link to your image.
 
 ## Installation
 
@@ -39,35 +38,60 @@ npm install @mui/icons-material @mui/material @mui/x-date-pickers date-fns react
 
 ## Usage
 
-### Basic Usage with `EtDatePicker`
+### Basic Usage with `EtDatePicker` (Single Date Selection)
+
+To use the date picker for single date selection:
 
 ```tsx
 import React, { useState } from "react";
 import EtDatePicker from "habesha-datepicker";
 
 function MyComponent() {
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState<Date | null>(null);
 
   return (
     <EtDatePicker
       label="Document Date"
-      onChange={(selectedDate: Date) => {
-        setDate(selectedDate);
+      onChange={(selectedDate) => {
+        setDate(selectedDate as Date | null); // Cast if necessary based on your exact onChange signature
       }}
       value={date}
       minDate={new Date("2023-08-20")}
       maxDate={new Date("2023-08-26")}
-      
       // other TextField props here, except InputProps
     />
   );
 }
 ```
 
+### Range Date Selection
+
+To enable date range selection, set the `isRange` prop to `true`. The `value` prop will then be an array `[startDate, endDate]` and `onChange` will provide a similar array.
+
+```tsx
+import React, { useState } from "react";
+import EtDatePicker from "habesha-datepicker";
+
+function MyRangeComponent() {
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+
+  return (
+    <EtDatePicker
+      label="Date Range"
+      isRange={true}
+      onChange={(selectedRange) => {
+        setDateRange(selectedRange as [Date | null, Date | null]);
+      }}
+      value={dateRange}
+      // You can still use minDate and maxDate to restrict the overall range
+    />
+  );
+}
+```
 
 ## Localization Support in `Version 0.1.1`
 
-Starting from version 0.1.7, `habesha-datepicker`  introduces localization support for different Ethiopian localizations. This feature allows a more tailored experience for users.
+Starting from version 0.1.7, `habesha-datepicker` introduces localization support for different Ethiopian localizations. This feature allows a more tailored experience for users.
 
 
 #### 1. First, you need to import the EtLocalizationProvider from the habesha-datepicker package.
@@ -79,7 +103,7 @@ import { EtLocalizationProvider } from 'habesha-datepicker';
 ```
 
 
-#### 2. Wrap Your Application or Component: 
+#### 2. Wrap Your Application or Component:
 Use the EtLocalizationProvider to wrap your entire application or just the section where the date picker is used. This will ensure that all date pickers within this context are localized.
 
 ```tsx
@@ -95,7 +119,7 @@ function MyApp({ children }) {
 #### 3. Configure the Localization Provider:
 The EtLocalizationProvider accepts the following props to configure the localization:
 
-`localType:` This can be set to "EC" (Amharic), "AO" (Afan Oromo), or "CUSTOM". It defines the type of localization you want to apply. "EC" and "AO" are predefined localizations, while "CUSTOM" allows for more personalized configurations.
+`localType:` This can be set to "GC" (Gregorian Calendar), "EC" (Amharic - Ethiopian Calendar), "AO" (Afan Oromo), or "CUSTOM". It defines the type of localization you want to apply. "GC", "EC" and "AO" are predefined localizations, while "CUSTOM" allows for more personalized configurations.
 
 `getLocalMonthName:` This optional function is used only when localType is set to "CUSTOM". It allows you to provide a custom function to return the name of the month based on the month number.
 

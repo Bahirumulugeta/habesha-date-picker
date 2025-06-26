@@ -92,14 +92,14 @@ const EthiopianDateCalendar = () => {
         if (ethDate.Month === 1) {
             setEthDate(Object.assign(Object.assign({}, ethDate), { Year: ethDate.Year - 1, Month: 13 }));
             if (!gregDate)
-                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign({}, ethDate)));
+                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Year: ethDate.Year - 1, Month: 13 })));
             const newDate = new Date(gregDate);
             newDate.setMonth(newDate.getMonth());
             setGregDate(newDate);
         }
         else {
             if (!gregDate)
-                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month - 1 })));
+                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month - 1, Day: 15 })));
             if (gregDate.getMonth() === 7 && ethDate.Month === 13) {
                 const newDate = new Date(gregDate);
                 newDate.setMonth(newDate.getMonth());
@@ -120,6 +120,7 @@ const EthiopianDateCalendar = () => {
             const newDate = new Date(gregDate);
             newDate.setMonth(newDate.getMonth() - 1);
             setGregDate(newDate);
+            setEthDate((prev) => (Object.assign(Object.assign({}, prev), { Month: prev.Month - 1, Day: 15 })));
         }
     };
     (0, react_1.useEffect)(() => {

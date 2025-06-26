@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export type DateType = "EN" | "EC" | "AO" | "CUSTOM";
+export type DateType = "GC" | "EC" | "AO" | "CUSTOM";
 
 // export type EtLocal = "EC" | "AO" | "CUSTOM";
 

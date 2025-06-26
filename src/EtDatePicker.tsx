@@ -12,7 +12,7 @@ import React from "react";
 
 import format from "date-fns/format";
 import { EventOutlined } from "@mui/icons-material";
-import { EtDatePickerProvider } from "./EtDatePickerContext";
+import { EtDatePickerProvider, EtDatePickerProviderProps } from "./EtDatePickerContext";
 import { DateType, EthiopianDate } from "./util/EthiopianDateUtils";
 import { DatePicker } from "@mui/x-date-pickers";
 import EtGrDateCalendar from "./Components/EtGrDateCalendar";
@@ -30,19 +30,23 @@ export type EtDateFieldProps = Pick<
 
 type EtDatePickerProps = {
   onClick?: () => void;
-  value?: Date | null;
-  onChange?: (date: Date) => void;
+  isRange?: boolean;
+  value?: Date | null | [Date | null, Date | null];
+  onChange?: (date: Date | null | [Date | null, Date | null]) => void;
 } & CustomFieldProps &
   EtDateFieldProps;
 const EtDatePicker: React.FC<EtDatePickerProps> = ({
   onClick,
   value,
   onChange,
+  isRange,
   ...props
 }) => {
   const { localType, getLocalMonthName } = useEtLocalization();
   const [dateType, setDateType] = useState<DateType>(localType);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date | null | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -54,46 +58,60 @@ const EtDatePicker: React.FC<EtDatePickerProps> = ({
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    if (isRange && (!startDate || !endDate)) return;
     setAnchorEl(null);
   };
 
-  const handleDateChange = (newDate: Date) => {
-    onChange?.(newDate);
-    if (newDate) {
-      if (
-        !(
-          newDate.getFullYear() !== date?.getFullYear() &&
-          newDate.getDate() === date?.getDate() &&
-          newDate.getMonth() === date?.getMonth()
-        )
-      ) {
+  const handleDateChange: EtDatePickerProviderProps['onChange'] = (newValue) => {
+    if (isRange) {
+      const [sDate, eDate] = newValue as [Date | null, Date | null];
+      setStartDate(sDate);
+      setEndDate(eDate);
+      onChange?.([sDate, eDate]);
+    } else {
+      setDate(newValue as Date | null);
+      onChange?.(newValue as Date | null);
+      if (newValue instanceof Date) {
         setAnchorEl(null);
       }
-      setDate(newDate);
     }
   };
 
   const handleDateTypeChange = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const newDateType = dateType === "EN" ? localType : "EN";
-    setDateType(newDateType ?? "EN");
+    const newDateType = dateType === "GC" ? localType : "GC";
+    setDateType(newDateType);
     event.stopPropagation();
   };
 
   const { disableSwitcher } = useEtLocalization();
 
   useEffect(() => {
-    if (value) {
-      setDate(value);
+    if (isRange) {
+      if (Array.isArray(value) && value.length === 2) {
+        setStartDate(value[0]);
+        setEndDate(value[1]);
+      } else {
+        setStartDate(null);
+        setEndDate(null);
+      }
+    } else {
+      if (value instanceof Date || value === null) {
+        setDate(value);
+      } else {
+        setDate(undefined);
+      }
     }
-  }, [value]);
+  }, [value, isRange]);
 
   return (
     <>
       <TextField
         {...props}
         value={
-          date
-            ? dateType === "EN"
+          isRange
+            ? `${startDate ? format(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? format(endDate, "dd/MMM/yyyy") : "-"}`
+            : date
+            ? dateType === "GC"
               ? format(date, "dd/MMM/yyyy")
               : EthiopianDate.formatEtDate(
                   EthiopianDate.toEth(date),
@@ -141,8 +159,9 @@ const EtDatePicker: React.FC<EtDatePickerProps> = ({
           disablePast={props.disablePast}
           minDate={props.minDate}
           maxDate={props.maxDate}
-          value={date}
-          dateType={dateType}
+          value={isRange ? [startDate, endDate] : date}
+          dateType={dateType === "AO" || dateType === "CUSTOM" ? "GC" : dateType}
+          isRange={isRange}
         >
           <EtGrDateCalendar />
         </EtDatePickerProvider>
