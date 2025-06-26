@@ -84,7 +84,10 @@ const EthiopianDateCalendar = () => {
   const decrementMonth = () => {
     if (ethDate.Month === 1) {
       setEthDate({ ...ethDate, Year: ethDate.Year - 1, Month: 13 });
-      if (!gregDate) return setGregDate(EthiopianDate.toGreg({ ...ethDate }));
+      if (!gregDate)
+        return setGregDate(
+          EthiopianDate.toGreg({ ...ethDate, Year: ethDate.Year - 1, Month: 13 })
+        );
       const newDate: Date = new Date(gregDate);
       newDate.setMonth(newDate.getMonth());
       setGregDate(newDate);
@@ -94,6 +97,7 @@ const EthiopianDateCalendar = () => {
           EthiopianDate.toGreg({
             ...ethDate,
             Month: ethDate.Month - 1,
+            Day: 15,
           })
         );
       if (gregDate.getMonth() === 7 && ethDate.Month === 13) {
@@ -121,6 +125,7 @@ const EthiopianDateCalendar = () => {
       const newDate: Date = new Date(gregDate);
       newDate.setMonth(newDate.getMonth() - 1);
       setGregDate(newDate);
+      setEthDate((prev) => ({ ...prev, Month: prev.Month - 1, Day: 15 }));
     }
   };
 
