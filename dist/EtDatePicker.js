@@ -24,46 +24,71 @@ const EthiopianDateUtils_1 = require("./util/EthiopianDateUtils");
 const EtGrDateCalendar_1 = __importDefault(require("./Components/EtGrDateCalendar"));
 const EtLocalizationProvider_1 = require("./EtLocalizationProvider");
 const EtDatePicker = (_a) => {
-    var { onClick, value, onChange } = _a, props = __rest(_a, ["onClick", "value", "onChange"]);
+    var { onClick, value, onChange, isRange } = _a, props = __rest(_a, ["onClick", "value", "onChange", "isRange"]);
     const { localType, getLocalMonthName } = (0, EtLocalizationProvider_1.useEtLocalization)();
     const [dateType, setDateType] = (0, react_1.useState)(localType);
-    const [date, setDate] = (0, react_1.useState)();
+    const [date, setDate] = (0, react_1.useState)(undefined);
+    const [startDate, setStartDate] = (0, react_1.useState)(null);
+    const [endDate, setEndDate] = (0, react_1.useState)(null);
     const [anchorEl, setAnchorEl] = react_2.default.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
+        if (isRange && (!startDate || !endDate))
+            return;
         setAnchorEl(null);
     };
-    const handleDateChange = (newDate) => {
-        onChange === null || onChange === void 0 ? void 0 : onChange(newDate);
-        if (newDate) {
-            if (!(newDate.getFullYear() !== (date === null || date === void 0 ? void 0 : date.getFullYear()) &&
-                newDate.getDate() === (date === null || date === void 0 ? void 0 : date.getDate()) &&
-                newDate.getMonth() === (date === null || date === void 0 ? void 0 : date.getMonth()))) {
+    const handleDateChange = (newValue) => {
+        if (isRange) {
+            const [sDate, eDate] = newValue;
+            setStartDate(sDate);
+            setEndDate(eDate);
+            onChange === null || onChange === void 0 ? void 0 : onChange([sDate, eDate]);
+        }
+        else {
+            setDate(newValue);
+            onChange === null || onChange === void 0 ? void 0 : onChange(newValue);
+            if (newValue instanceof Date) {
                 setAnchorEl(null);
             }
-            setDate(newDate);
         }
     };
     const handleDateTypeChange = (event) => {
-        const newDateType = dateType === "EN" ? localType : "EN";
-        setDateType(newDateType !== null && newDateType !== void 0 ? newDateType : "EN");
+        const newDateType = dateType === "GC" ? localType : "GC";
+        setDateType(newDateType);
         event.stopPropagation();
     };
     const { disableSwitcher } = (0, EtLocalizationProvider_1.useEtLocalization)();
     (0, react_1.useEffect)(() => {
-        if (value) {
-            setDate(value);
+        if (isRange) {
+            if (Array.isArray(value) && value.length === 2) {
+                setStartDate(value[0]);
+                setEndDate(value[1]);
+            }
+            else {
+                setStartDate(null);
+                setEndDate(null);
+            }
         }
-    }, [value]);
+        else {
+            if (value instanceof Date || value === null) {
+                setDate(value);
+            }
+            else {
+                setDate(undefined);
+            }
+        }
+    }, [value, isRange]);
     return (react_2.default.createElement(react_2.default.Fragment, null,
-        react_2.default.createElement(material_1.TextField, Object.assign({}, props, { value: date
-                ? dateType === "EN"
-                    ? (0, format_1.default)(date, "dd/MMM/yyyy")
-                    : EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(date), localType, getLocalMonthName)
-                : "-", InputProps: {
+        react_2.default.createElement(material_1.TextField, Object.assign({}, props, { value: isRange
+                ? `${startDate ? (0, format_1.default)(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? (0, format_1.default)(endDate, "dd/MMM/yyyy") : "-"}`
+                : date
+                    ? dateType === "GC"
+                        ? (0, format_1.default)(date, "dd/MMM/yyyy")
+                        : EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(date), localType, getLocalMonthName)
+                    : "-", InputProps: {
                 onClick: props.disabled
                     ? undefined
                     : (event) => {
@@ -79,7 +104,7 @@ const EtDatePicker = (_a) => {
         react_2.default.createElement(material_1.Menu, { id: "basic-menu", anchorEl: anchorEl, open: open, onClose: handleClose, MenuListProps: {
                 "aria-labelledby": "basic-button",
             } },
-            react_2.default.createElement(EtDatePickerContext_1.EtDatePickerProvider, { onChange: handleDateChange, disableFuture: props.disableFuture, disablePast: props.disablePast, minDate: props.minDate, maxDate: props.maxDate, value: date, dateType: dateType },
+            react_2.default.createElement(EtDatePickerContext_1.EtDatePickerProvider, { onChange: handleDateChange, disableFuture: props.disableFuture, disablePast: props.disablePast, minDate: props.minDate, maxDate: props.maxDate, value: isRange ? [startDate, endDate] : date, dateType: dateType === "AO" || dateType === "CUSTOM" ? "GC" : dateType, isRange: isRange },
                 react_2.default.createElement(EtGrDateCalendar_1.default, null)))));
 };
 exports.default = EtDatePicker;

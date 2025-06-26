@@ -8,8 +8,9 @@ export type EtDateFieldProps = Pick<React.ComponentProps<typeof DatePicker>, "di
 };
 type EtDatePickerProps = {
     onClick?: () => void;
-    value?: Date | null;
-    onChange?: (date: Date) => void;
+    isRange?: boolean;
+    value?: Date | null | [Date | null, Date | null];
+    onChange?: (date: Date | null | [Date | null, Date | null]) => void;
 } & CustomFieldProps & EtDateFieldProps;
 declare const EtDatePicker: React.FC<EtDatePickerProps>;
 export default EtDatePicker;

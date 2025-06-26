@@ -55,18 +55,18 @@ const EtDateViewer = (_a) => {
     const [dateType, setDateType] = (0, react_1.useState)(initialDateType !== null && initialDateType !== void 0 ? initialDateType : localType);
     const handleDateTypeChange = (event) => {
         event.stopPropagation();
-        const newDateType = dateType === "EN" ? localType : "EN";
-        setDateType(newDateType !== null && newDateType !== void 0 ? newDateType : "EN");
+        const newDateType = dateType === "GC" ? localType : "GC";
+        setDateType(newDateType !== null && newDateType !== void 0 ? newDateType : "GC");
     };
     const { disableSwitcher: disableSwitch } = (0, EtLocalizationProvider_1.useEtLocalization)();
     return (react_1.default.createElement(material_1.Stack, { direction: "row", spacing: 0.7 },
         !disableSwitcher && !disableSwitch && (react_1.default.createElement(material_1.ButtonBase, { onClick: handleDateTypeChange },
             react_1.default.createElement(material_1.Typography, Object.assign({ fontWeight: 700, color: "primary" }, props), dateType === "CUSTOM" ? "CU" : dateType))),
         react_1.default.createElement(material_1.Typography, Object.assign({}, props), showTime
-            ? dateType === "EN"
+            ? dateType === "GC"
                 ? `${(0, date_fns_1.format)(date, "MMM dd/yyyy")} ${(0, date_fns_1.format)(date, "hh:mm a")}`
                 : EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(date), dateType !== null && dateType !== void 0 ? dateType : localType, getLocalMonthName, date.getTime())
-            : dateType === "EN"
+            : dateType === "GC"
                 ? (0, date_fns_1.format)(date, "MMM dd/yyyy")
                 : EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(date), dateType !== null && dateType !== void 0 ? dateType : localType, getLocalMonthName))));
 };

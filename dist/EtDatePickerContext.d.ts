@@ -1,21 +1,29 @@
 import React, { ReactNode } from "react";
 import { EtDateFieldProps } from "./EtDatePicker";
-import { DateType } from "./util/EthiopianDateUtils";
-type EtDatePickerContextType = {
-    value?: Date;
-    monthValue?: Date;
-    gregDate?: Date;
+export type EtDatePickerContextValue = {
+    value?: Date | null;
+    monthValue?: Date | null;
+    gregDate?: Date | null;
     setGregDate: (date: Date) => void;
     onMonthChange: (date: Date) => void;
-    onDateChange: (date: Date) => void;
-    dateType?: DateType;
+    onDateChange: (date: Date | null | [Date | null, Date | null]) => void;
+    dateType: "GC" | "EC";
+    locale: "am" | "gc";
+    disableFuture?: boolean;
+    disablePast?: boolean;
+    minDate?: Date;
+    maxDate?: Date;
+    isRange?: boolean;
+    startDate?: Date | null;
+    endDate?: Date | null;
 } & EtDateFieldProps;
-declare const EtDatePickerContext: React.Context<EtDatePickerContextType>;
-type EtDatePickerProviderProps = {
+declare const EtDatePickerContext: React.Context<EtDatePickerContextValue>;
+export type EtDatePickerProviderProps = {
     children: ReactNode;
-    onChange?: (date: Date) => void;
-    value?: Date;
-    dateType?: DateType;
+    onChange?: (date: Date | null | [Date | null, Date | null]) => void;
+    value?: Date | null | [Date | null, Date | null];
+    dateType?: "GC" | "EC";
+    isRange?: boolean;
 } & EtDateFieldProps;
 declare const EtDatePickerProvider: React.FC<EtDatePickerProviderProps>;
 export { EtDatePickerProvider, EtDatePickerContext };

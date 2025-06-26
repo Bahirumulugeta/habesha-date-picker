@@ -1,4 +1,4 @@
-export type DateType = "EN" | "EC" | "AO" | "CUSTOM";
+export type DateType = "GC" | "EC" | "AO" | "CUSTOM";
 export declare namespace EthiopianDate {
     const shortDays: string[];
     const englishShortDays: string[];
