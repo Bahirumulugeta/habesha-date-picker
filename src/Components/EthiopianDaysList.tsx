@@ -41,6 +41,7 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   const [selectedDate, setSelectedDate] = useState<EthiopianDate.EtDate | null>(
     value ? EthiopianDate.toEth(value) : null
   );
+  const [hoveredEtDate, setHoveredEtDate] = useState<EthiopianDate.EtDate | null>(null);
 
   const getEtDate = (day: number): EthiopianDate.EtDate => {
     return { Day: day, Month: month, Year: year };
@@ -104,8 +105,19 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   };
 
   const inRange = (day: number): boolean => {
+    if (!isRange || !startDate) return false;
+
     const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
-    return !!(isRange && startDate && endDate && currentDayGregorian.getTime() > startDate.getTime() && currentDayGregorian.getTime() < endDate.getTime());
+    const startMs = startDate.getTime();
+
+    if (endDate) {
+      const endMs = endDate.getTime();
+      return currentDayGregorian.getTime() > Math.min(startMs, endMs) && currentDayGregorian.getTime() < Math.max(startMs, endMs);
+    } else if (hoveredEtDate) {
+      const hoveredMs = EthiopianDate.toGreg(hoveredEtDate).getTime();
+      return currentDayGregorian.getTime() > Math.min(startMs, hoveredMs) && currentDayGregorian.getTime() < Math.max(startMs, hoveredMs);
+    }
+    return false;
   };
 
   return (
@@ -168,6 +180,17 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
                     onDateChange(currentDayGregorian);
                     setGregDate(currentDayGregorian);
                   }
+                  setHoveredEtDate(null); // Clear hovered date on selection
+                }}
+                onMouseEnter={() => {
+                  if (isRange && startDate && !endDate) {
+                    setHoveredEtDate(getEtDate(day));
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (isRange && startDate && !endDate) {
+                    setHoveredEtDate(null);
+                  }
                 }}
                 sx={{
                   width: cellSize,
@@ -200,26 +223,21 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
                     !isRangeStart(day) &&
                     !isRangeEnd(day) &&
                     !inRange(day)
-                      ? "1px solid grey"
+                      ? `1px solid ${today.Month === month && today.Year === year ? 'primary.main' : 'transparent'}`
                       : "none",
-                  gridColumn:
-                    index === 0
-                      ? EthiopianDate.getEtMonthStartDate(month, year)
-                      : undefined,
-                  fontSize: "12px",
                   "&:hover": {
                     backgroundColor:
-                      isRangeStart(day) || isRangeEnd(day)
+                      (isRangeStart(day) || isRangeEnd(day))
                         ? "primary.dark"
                         : inRange(day)
                         ? "action.hover"
-                        : isSelectedDate(day)
-                        ? "primary.dark"
                         : undefined,
+                    color:
+                      isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                   },
                 }}
               >
-                {day}
+                <Typography variant="body2">{day}</Typography>
               </IconButton>
             );
           }

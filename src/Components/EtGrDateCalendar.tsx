@@ -55,6 +55,7 @@ const EtGrDateCalendar = () => {
   } = etDatePickerContext;
 
   const [gregDatePicker, setGregDatePicker] = useState<Date | null>(gregDate || null);
+  const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
 
   const [startMonth, setStartMonth] = useState<Date | null>(startDate || gregDate || new Date());
   const [endMonth, setEndMonth] = useState<Date | null>(startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : gregDate ? new Date(gregDate.getFullYear(), gregDate.getMonth() + 1, 1) : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
@@ -107,24 +108,53 @@ const EtGrDateCalendar = () => {
                   value={startDate}
                   onChange={(date) => {
                     if (date) {
-                      etDatePickerContext.onDateChange([date, endDate]);
+                      if (!startDate || (startDate && endDate)) {
+                        etDatePickerContext.onDateChange([date, null]);
+                      } else if (date.getTime() < startDate.getTime()) {
+                        etDatePickerContext.onDateChange([date, startDate]);
+                      } else {
+                        etDatePickerContext.onDateChange([startDate, date]);
+                      }
+                      setHoveredDate(null); // Clear hovered date on selection
                     }
                   }}
                   disableFuture={disableFuture}
                   onMonthChange={(date) => {
                     setStartMonth(date);
+                    setHoveredDate(null); // Clear hovered date on month change
                   }}
                   disablePast={disablePast}
                   minDate={minDate}
                   maxDate={maxDate}
                   slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
                   slotProps={{
-                    day: (ownerState) => ({
-                      ...ownerState,
-                      isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(),
-                      isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(),
-                      inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
-                    }),
+                    day: (ownerState: any) => {
+                      const isRangeStart = startDate && ownerState.day.getTime() === startDate.getTime();
+                      const isRangeEnd = endDate && ownerState.day.getTime() === endDate.getTime();
+                      const isInRange = (
+                        startDate &&
+                        (
+                          (endDate && ownerState.day.getTime() > Math.min(startDate.getTime(), endDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), endDate.getTime())) ||
+                          (!endDate && hoveredDate && ownerState.day.getTime() > Math.min(startDate.getTime(), hoveredDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), hoveredDate.getTime()))
+                        )
+                      );
+                      return {
+                        ...ownerState,
+                        isRangeStart: isRangeStart,
+                        isRangeEnd: isRangeEnd,
+                        inRange: isInRange,
+                        onMouseEnter: () => {
+                          if (isRange && startDate && !endDate) {
+                            setHoveredDate(ownerState.day);
+                          }
+                        },
+                        onMouseLeave: () => {
+                          if (isRange && startDate && !endDate) {
+                            setHoveredDate(null);
+                          }
+                        },
+                      };
+                    },
                   }}
                   openTo="day"
                   views={['month', 'year', 'day']}
@@ -138,24 +168,53 @@ const EtGrDateCalendar = () => {
                   value={endDate}
                   onChange={(date) => {
                     if (date) {
-                      etDatePickerContext.onDateChange([startDate, date]);
+                      if (!startDate || (startDate && endDate)) {
+                        etDatePickerContext.onDateChange([date, null]);
+                      } else if (date.getTime() < startDate.getTime()) {
+                        etDatePickerContext.onDateChange([date, startDate]);
+                      } else {
+                        etDatePickerContext.onDateChange([startDate, date]);
+                      }
+                      setHoveredDate(null); // Clear hovered date on selection
                     }
                   }}
                   disableFuture={disableFuture}
                   onMonthChange={(date) => {
                     setEndMonth(date);
+                    setHoveredDate(null); // Clear hovered date on month change
                   }}
                   disablePast={disablePast}
                   minDate={minDate}
                   maxDate={maxDate}
                   slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
                   slotProps={{
-                    day: (ownerState) => ({
-                      ...ownerState,
-                      isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(),
-                      isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(),
-                      inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
-                    }),
+                    day: (ownerState: any) => {
+                      const isRangeStart = startDate && ownerState.day.getTime() === startDate.getTime();
+                      const isRangeEnd = endDate && ownerState.day.getTime() === endDate.getTime();
+                      const isInRange = (
+                        startDate &&
+                        (
+                          (endDate && ownerState.day.getTime() > Math.min(startDate.getTime(), endDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), endDate.getTime())) ||
+                          (!endDate && hoveredDate && ownerState.day.getTime() > Math.min(startDate.getTime(), hoveredDate.getTime()) && ownerState.day.getTime() < Math.max(startDate.getTime(), hoveredDate.getTime()))
+                        )
+                      );
+                      return {
+                        ...ownerState,
+                        isRangeStart: isRangeStart,
+                        isRangeEnd: isRangeEnd,
+                        inRange: isInRange,
+                        onMouseEnter: () => {
+                          if (isRange && startDate && !endDate) {
+                            setHoveredDate(ownerState.day);
+                          }
+                        },
+                        onMouseLeave: () => {
+                          if (isRange && startDate && !endDate) {
+                            setHoveredDate(null);
+                          }
+                        },
+                      };
+                    },
                   }}
                   openTo="day"
                   views={['month', 'year', 'day']}
@@ -202,7 +261,7 @@ const EtGrDateCalendar = () => {
                     maxDate={maxDate}
                     slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
                     slotProps={{
-                      day: (ownerState) => ({
+                      day: (ownerState: any) => ({
                         ...ownerState,
                         isRangeStart: isRange && startDate && ownerState.day.getTime() === startDate.getTime(),
                         isRangeEnd: isRange && endDate && ownerState.day.getTime() === endDate.getTime(),
