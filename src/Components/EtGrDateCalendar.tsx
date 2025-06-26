@@ -95,7 +95,12 @@ const EtGrDateCalendar = () => {
               <Divider orientation="vertical" flexItem />
               <Box width={295} display="flex" flexDirection="column" ml={1} pr={4}>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>End Date</Typography>
-                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+                <EthiopianDateCalendar
+                  isRange={isRange}
+                  startDate={startDate}
+                  endDate={endDate}
+                  initialViewDate={startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : null}
+                />
               </Box>
             </>
           ) : (

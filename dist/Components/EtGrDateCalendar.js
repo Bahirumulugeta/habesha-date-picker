@@ -109,7 +109,7 @@ const EtGrDateCalendar = () => {
             react_2.default.createElement(material_1.Divider, { orientation: "vertical", flexItem: true }),
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", ml: 1, pr: 4 },
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "End Date"),
-                react_2.default.createElement(x_date_pickers_1.DateCalendar, { monthsPerRow: 3, value: endDate, onChange: (date) => {
+                react_2.default.createElement(x_date_pickers_1.DateCalendar, { monthsPerRow: 3, value: endDate || endMonth, onChange: (date) => {
                         if (date) {
                             if (!startDate || (startDate && endDate)) {
                                 etDatePickerContext.onDateChange([date, null]);

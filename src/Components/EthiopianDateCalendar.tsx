@@ -17,17 +17,19 @@ interface EthiopianDateCalendarProps {
   isRange?: boolean;
   startDate?: Date | null;
   endDate?: Date | null;
+  initialViewDate?: Date | null;
 }
 
 const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
   isRange,
   startDate,
   endDate,
+  initialViewDate,
 }) => {
   const { value, monthValue, setGregDate, gregDate } =
     useContext(EtDatePickerContext);
   const today = EthiopianDate.toEth(new Date());
-  const [ethDate, setEthDate] = useState<EthiopianDate.EtDate>(today);
+  const [ethDate, setEthDate] = useState<EthiopianDate.EtDate>(initialViewDate ? EthiopianDate.toEth(initialViewDate) : today);
   const [showYearList, setShowYearList] = useState(false);
 
   const { localType, getLocalMonthName } = useEtLocalization();
@@ -140,10 +142,12 @@ const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
   };
 
   useEffect(() => {
-    if (value) {
+    if (initialViewDate) {
+      setEthDate(EthiopianDate.toEth(initialViewDate));
+    } else if (value && !isRange) {
       setEthDate(EthiopianDate.toEth(value));
     }
-  }, [value]);
+  }, [value, isRange, initialViewDate]);
 
   useEffect(() => {
     if (!monthValue) return;
