@@ -44,7 +44,7 @@ const EthiopianDaysList_1 = __importDefault(require("./EthiopianDaysList"));
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 const EtLocalizationProvider_1 = require("../EtLocalizationProvider");
-const EthiopianDateCalendar = () => {
+const EthiopianDateCalendar = ({ isRange, startDate, endDate, }) => {
     const { value, monthValue, setGregDate, gregDate } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
     const [ethDate, setEthDate] = (0, react_1.useState)(today);

@@ -46,6 +46,10 @@ const EtDatePicker = (_a) => {
             setStartDate(sDate);
             setEndDate(eDate);
             onChange === null || onChange === void 0 ? void 0 : onChange([sDate, eDate]);
+            // Close the modal if both start and end dates are selected
+            if (sDate && eDate) {
+                setAnchorEl(null);
+            }
         }
         else {
             setDate(newValue);

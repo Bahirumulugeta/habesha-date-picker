@@ -12,21 +12,21 @@ export type EtDatePickerContextValue = {
   setGregDate: (date: Date) => void;
   onMonthChange: (date: Date) => void;
   onDateChange: (date: Date | null | [Date | null, Date | null]) => void;
-  dateType: "GC" | "EC";
+  dateType: "GC" | "EC" | "AO" | "CUSTOM";
   locale: "am" | "gc";
   disableFuture?: boolean;
   disablePast?: boolean;
   minDate?: Date;
   maxDate?: Date;
   isRange?: boolean;
-  startDate?: Date | null;
-  endDate?: Date | null;
+  startDate: Date | null;
+  endDate: Date | null;
 } & EtDateFieldProps;
 
 const EtDatePickerContext = React.createContext<EtDatePickerContextValue>({
-  value: undefined,
-  monthValue: undefined,
-  gregDate: undefined,
+  value: null,
+  monthValue: null,
+  gregDate: null,
   setGregDate: (date: Date) => {},
   onMonthChange: (date: Date) => {},
   onDateChange: (date: Date | null | [Date | null, Date | null]) => {},
@@ -41,7 +41,7 @@ export type EtDatePickerProviderProps = {
   children: ReactNode;
   onChange?: (date: Date | null | [Date | null, Date | null]) => void;
   value?: Date | null | [Date | null, Date | null];
-  dateType?: "GC" | "EC";
+  dateType?: "GC" | "EC" | "AO" | "CUSTOM";
   isRange?: boolean;
 } & EtDateFieldProps;
 
@@ -59,22 +59,26 @@ const EtDatePickerProvider: React.FC<EtDatePickerProviderProps> = ({
   const [date, setDate] = useState<Date | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [monthValue, setMonthValue] = useState<Date | undefined | null>();
-  const [gregDate, setGregDate] = useState<Date | undefined | null>();
+  const [monthValue, setMonthValue] = useState<Date | null>(null);
+  const [gregDate, setGregDate] = useState<Date | null>(null);
 
   const onDateChange = (newDate: Date | null | [Date | null, Date | null]) => {
     if (isRange) {
       if (Array.isArray(newDate) && newDate.length === 2) {
-        setStartDate(newDate[0]);
-        setEndDate(newDate[1]);
+        const [newStartDate, newEndDate] = newDate;
+        setStartDate(newStartDate);
+        setEndDate(newEndDate);
+        onChange?.([newStartDate, newEndDate]);
       } else if (newDate instanceof Date) {
+        // If selecting the first date in a range
         setStartDate(newDate);
         setEndDate(null);
+        onChange?.([newDate, null]);
       }
     } else {
       setDate(newDate as Date | null);
+      onChange?.(newDate);
     }
-    onChange?.(isRange ? [startDate, endDate] : newDate);
   };
 
   const onMonthChange = (date: Date) => {
@@ -86,6 +90,9 @@ const EtDatePickerProvider: React.FC<EtDatePickerProviderProps> = ({
       if (Array.isArray(value) && value.length === 2) {
         setStartDate(value[0]);
         setEndDate(value[1]);
+      } else {
+        setStartDate(null);
+        setEndDate(null);
       }
     } else {
       setDate(value as Date | null);

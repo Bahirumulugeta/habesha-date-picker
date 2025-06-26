@@ -1,13 +1,11 @@
-import { Box, Button, Divider } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import { DateCalendar, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 
 import { useContext, useEffect, useState } from "react";
 import EthiopianDateCalendar from "./EthiopianDateCalendar";
 import { EtDatePickerContext } from "../EtDatePickerContext";
 import React from "react";
-import { useEtLocalization } from "../EtLocalizationProvider";
 import { styled } from "@mui/material/styles";
-import { DayCalendarProps } from '@mui/x-date-pickers/internals';
 
 interface CustomPickerDayProps extends PickersDayProps<Date> {
   isRangeStart?: boolean;
@@ -56,96 +54,173 @@ const EtGrDateCalendar = () => {
     endDate,
   } = etDatePickerContext;
 
-  const gregDateValue = gregDate?.toLocaleDateString();
+  const [gregDatePicker, setGregDatePicker] = useState<Date | null>(gregDate || null);
 
-  const [gregDatePicker, setGregDatePicker] = useState<Date | null | undefined>(undefined);
+  const [startMonth, setStartMonth] = useState<Date | null>(startDate || gregDate || new Date());
+  const [endMonth, setEndMonth] = useState<Date | null>(startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : gregDate ? new Date(gregDate.getFullYear(), gregDate.getMonth() + 1, 1) : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
 
   useEffect(() => {
-    if (isRange) {
-      setGregDatePicker(startDate);
-    } else if (gregDateValue) {
-      const value = new Date(gregDateValue);
-      setGregDatePicker(value);
+    if (isRange && startDate) {
+      setStartMonth(startDate);
+      setEndMonth(new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1));
+    } else if (!isRange) {
+      setGregDatePicker(gregDate || null);
     }
-  }, [gregDateValue, isRange, startDate]);
+  }, [isRange, startDate, gregDate]);
 
   const handleTodayButtonClick = () => {
-    onDateChange(new Date());
+    if (isRange) {
+      onDateChange([new Date(), null]);
+    } else {
+      onDateChange(new Date());
+    }
   };
 
-  // const { disableEt, disableGregorian } = useEtLocalization();
-  const disableEt = dateType === "GC";
-  const disableGregorian = dateType === "EC";
+  const showEthiopianCalendar = dateType !== "GC";
+  const showGregorianCalendar = dateType === "GC";
+
   return (
-    <Box sx={{ minWidth: !disableEt && !disableGregorian ? 610 : undefined }}>
+    <Box sx={{ minWidth: isRange ? 610 : undefined }}>
       <Box display={"flex"}>
-        {!disableEt && (
-          <Box
-            width={295}
-            display="flex"
-            flexDirection="column"
-            mr={disableGregorian ? 2 : 1}
-          >
-            <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
-          </Box>
-        )}
-        {!disableEt && !disableGregorian && (
-          <Divider orientation="vertical" flexItem />
-        )}
-        {!disableGregorian && (
-          <Box width={295} mr={disableEt ? 2 : 0}>
-            <Box width={295} pr={4}>
-              <DateCalendar<Date>
-                monthsPerRow={3}
-                value={isRange ? startDate : gregDatePicker}
-                onChange={(date) => {
-                  if (date && date instanceof Date) {
-                    if (isRange) {
-                      if (!startDate || (startDate && endDate)) {
-                        etDatePickerContext.onDateChange([date, null]);
-                      } else if (date.getTime() < startDate.getTime()) {
-                        etDatePickerContext.onDateChange([date, startDate]);
-                      } else {
-                        etDatePickerContext.onDateChange([startDate, date]);
-                      }
-                    } else {
-                      onDateChange(date);
+        {isRange ? (
+          // Range mode: Display two calendars
+          (dateType === "EC" || dateType === "AO" || dateType === "CUSTOM") ? (
+            // Ethiopian/Afan Oromo range pickers
+            <>
+              <Box width={295} display="flex" flexDirection="column" mr={1}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Start Date</Typography>
+                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+              </Box>
+              <Divider orientation="vertical" flexItem />
+              <Box width={295} display="flex" flexDirection="column" ml={1} pr={4}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>End Date</Typography>
+                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+              </Box>
+            </>
+          ) : (
+            // Gregorian range pickers (dateType === "GC")
+            <>
+              <Box width={295} display="flex" flexDirection="column" mr={1}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Start Date</Typography>
+                <DateCalendar<Date>
+                  monthsPerRow={3}
+                  value={startDate}
+                  onChange={(date) => {
+                    if (date) {
+                      etDatePickerContext.onDateChange([date, endDate]);
                     }
-                  }
-                }}
-                disableFuture={disableFuture}
-                onMonthChange={(date) => {
-                  const newDate = new Date(date);
-                  newDate.setDate(gregDate?.getDate() ?? 15);
-                  onMonthChange(newDate);
-                  setGregDate(newDate);
-                }}
-                disablePast={disablePast}
-                minDate={minDate}
-                maxDate={maxDate}
-                slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
-                slotProps={{
-                  day: (ownerState) => ({
-                    ...ownerState,
-                    isRangeStart: isRange && startDate && ownerState.day.getTime() === startDate.getTime(),
-                    isRangeEnd: isRange && endDate && ownerState.day.getTime() === endDate.getTime(),
-                    inRange: isRange && startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
-                  }),
-                }}
-              />
-            </Box>
-          </Box>
+                  }}
+                  disableFuture={disableFuture}
+                  onMonthChange={(date) => {
+                    setStartMonth(date);
+                  }}
+                  disablePast={disablePast}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
+                  slotProps={{
+                    day: (ownerState) => ({
+                      ...ownerState,
+                      isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(),
+                      isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(),
+                      inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
+                    }),
+                  }}
+                  openTo="day"
+                  views={['month', 'year', 'day']}
+                />
+              </Box>
+              <Divider orientation="vertical" flexItem />
+              <Box width={295} display="flex" flexDirection="column" ml={1} pr={4}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>End Date</Typography>
+                <DateCalendar<Date>
+                  monthsPerRow={3}
+                  value={endDate}
+                  onChange={(date) => {
+                    if (date) {
+                      etDatePickerContext.onDateChange([startDate, date]);
+                    }
+                  }}
+                  disableFuture={disableFuture}
+                  onMonthChange={(date) => {
+                    setEndMonth(date);
+                  }}
+                  disablePast={disablePast}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
+                  slotProps={{
+                    day: (ownerState) => ({
+                      ...ownerState,
+                      isRangeStart: startDate && ownerState.day.getTime() === startDate.getTime(),
+                      isRangeEnd: endDate && ownerState.day.getTime() === endDate.getTime(),
+                      inRange: startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
+                    }),
+                  }}
+                  openTo="day"
+                  views={['month', 'year', 'day']}
+                />
+              </Box>
+            </>
+          )
+        ) : (
+          // Single date mode
+          <>
+            {showEthiopianCalendar && (
+              <Box
+                width={295}
+                display="flex"
+                flexDirection="column"
+                mr={showGregorianCalendar ? 1 : 0}
+              >
+                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+              </Box>
+            )}
+            {showEthiopianCalendar && showGregorianCalendar && (
+              <Divider orientation="vertical" flexItem />
+            )}
+            {showGregorianCalendar && (
+              <Box width={295} mr={showEthiopianCalendar ? 0 : 2}>
+                <Box width={295} pr={4}>
+                  <DateCalendar<Date>
+                    monthsPerRow={3}
+                    value={gregDatePicker}
+                    onChange={(date) => {
+                      if (date) {
+                        onDateChange(date);
+                      }
+                    }}
+                    disableFuture={disableFuture}
+                    onMonthChange={(date) => {
+                      const newDate = new Date(date);
+                      newDate.setDate(gregDate?.getDate() ?? 15);
+                      onMonthChange(newDate);
+                      setGregDate(newDate);
+                    }}
+                    disablePast={disablePast}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    slots={{ day: StyledDay as React.ComponentType<PickersDayProps<Date>> }}
+                    slotProps={{
+                      day: (ownerState) => ({
+                        ...ownerState,
+                        isRangeStart: isRange && startDate && ownerState.day.getTime() === startDate.getTime(),
+                        isRangeEnd: isRange && endDate && ownerState.day.getTime() === endDate.getTime(),
+                        inRange: isRange && startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime(),
+                      }),
+                    }}
+                    openTo="day"
+                    views={['month', 'year', 'day']}
+                  />
+                </Box>
+              </Box>
+            )}
+          </>
         )}
       </Box>
-      <Box
-      // sx={{
-      //   flexGrow: 1,
-      //   display: "flex",
-      //   alignItems: "flex-start",
-      // }}
-      >
+      <Box>
         <Button
-          sx={{ ml: 2, mt: disableGregorian ? 0 : -7 }}
+          sx={{ ml: 2, mt: showGregorianCalendar && !isRange ? -7 : 0 }}
           onClick={handleTodayButtonClick}
         >
           Today

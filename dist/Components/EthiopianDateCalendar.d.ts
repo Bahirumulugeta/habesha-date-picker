@@ -1,3 +1,8 @@
 import React from "react";
-declare const EthiopianDateCalendar: () => React.JSX.Element;
+interface EthiopianDateCalendarProps {
+    isRange?: boolean;
+    startDate?: Date | null;
+    endDate?: Date | null;
+}
+declare const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps>;
 export default EthiopianDateCalendar;

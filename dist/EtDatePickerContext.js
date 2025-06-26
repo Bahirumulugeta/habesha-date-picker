@@ -38,9 +38,9 @@ const react_1 = __importStar(require("react"));
 const x_date_pickers_1 = require("@mui/x-date-pickers");
 const AdapterDateFns_1 = require("@mui/x-date-pickers/AdapterDateFns");
 const EtDatePickerContext = react_1.default.createContext({
-    value: undefined,
-    monthValue: undefined,
-    gregDate: undefined,
+    value: null,
+    monthValue: null,
+    gregDate: null,
     setGregDate: (date) => { },
     onMonthChange: (date) => { },
     onDateChange: (date) => { },
@@ -55,23 +55,27 @@ const EtDatePickerProvider = ({ children, onChange, value, disableFuture, disabl
     const [date, setDate] = (0, react_1.useState)(null);
     const [startDate, setStartDate] = (0, react_1.useState)(null);
     const [endDate, setEndDate] = (0, react_1.useState)(null);
-    const [monthValue, setMonthValue] = (0, react_1.useState)();
-    const [gregDate, setGregDate] = (0, react_1.useState)();
+    const [monthValue, setMonthValue] = (0, react_1.useState)(null);
+    const [gregDate, setGregDate] = (0, react_1.useState)(null);
     const onDateChange = (newDate) => {
         if (isRange) {
             if (Array.isArray(newDate) && newDate.length === 2) {
-                setStartDate(newDate[0]);
-                setEndDate(newDate[1]);
+                const [newStartDate, newEndDate] = newDate;
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+                onChange === null || onChange === void 0 ? void 0 : onChange([newStartDate, newEndDate]);
             }
             else if (newDate instanceof Date) {
+                // If selecting the first date in a range
                 setStartDate(newDate);
                 setEndDate(null);
+                onChange === null || onChange === void 0 ? void 0 : onChange([newDate, null]);
             }
         }
         else {
             setDate(newDate);
+            onChange === null || onChange === void 0 ? void 0 : onChange(newDate);
         }
-        onChange === null || onChange === void 0 ? void 0 : onChange(isRange ? [startDate, endDate] : newDate);
     };
     const onMonthChange = (date) => {
         setMonthValue(date);
@@ -81,6 +85,10 @@ const EtDatePickerProvider = ({ children, onChange, value, disableFuture, disabl
             if (Array.isArray(value) && value.length === 2) {
                 setStartDate(value[0]);
                 setEndDate(value[1]);
+            }
+            else {
+                setStartDate(null);
+                setEndDate(null);
             }
         }
         else {
