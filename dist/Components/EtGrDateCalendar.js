@@ -67,7 +67,7 @@ const EtGrDateCalendar = () => {
             react_2.default.createElement(material_1.Divider, { orientation: "vertical", flexItem: true }),
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", ml: 1, pr: 4 },
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "End Date"),
-                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate })))) : (
+                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate, initialViewDate: startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : null })))) : (
         // Gregorian range pickers (dateType === "GC")
         react_2.default.createElement(react_2.default.Fragment, null,
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", mr: 1 },

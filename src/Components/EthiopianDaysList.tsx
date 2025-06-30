@@ -11,6 +11,9 @@ type EthiopianDaysListProps = {
   isRange?: boolean;
   startDate?: Date | null;
   endDate?: Date | null;
+  hoveredEtDate?: EthiopianDate.EtDate | null;
+  setHoveredEtDate?: (date: EthiopianDate.EtDate | null) => void;
+  onDateChange: (date: Date | [Date | null, Date | null]) => void;
 };
 
 const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
@@ -19,6 +22,9 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   isRange,
   startDate,
   endDate,
+  hoveredEtDate,
+  setHoveredEtDate,
+  onDateChange,
 }) => {
   const { localType } = useEtLocalization();
   const cellSize = "36px";
@@ -29,7 +35,7 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
       : EthiopianDate.englishShortDays;
   const today = EthiopianDate.toEth(new Date());
   const {
-    onDateChange,
+    onDateChange: contextOnDateChange,
     setGregDate,
     value,
     disableFuture,
@@ -41,7 +47,6 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   const [selectedDate, setSelectedDate] = useState<EthiopianDate.EtDate | null>(
     value ? EthiopianDate.toEth(value) : null
   );
-  const [hoveredEtDate, setHoveredEtDate] = useState<EthiopianDate.EtDate | null>(null);
 
   const getEtDate = (day: number): EthiopianDate.EtDate => {
     return { Day: day, Month: month, Year: year };
@@ -94,17 +99,17 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
     );
   };
 
-  const isRangeStart = (day: number): boolean => {
+  const isDayRangeStart = (day: number): boolean => {
     const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
     return !!(isRange && startDate && currentDayGregorian.getTime() === startDate.getTime());
   };
 
-  const isRangeEnd = (day: number): boolean => {
+  const isDayRangeEnd = (day: number): boolean => {
     const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
     return !!(isRange && endDate && currentDayGregorian.getTime() === endDate.getTime());
   };
 
-  const inRange = (day: number): boolean => {
+  const isDayInRange = (day: number): boolean => {
     if (!isRange || !startDate) return false;
 
     const currentDayGregorian = EthiopianDate.toGreg(getEtDate(day));
@@ -177,18 +182,18 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
                     }
                   } else {
                     setSelectedDate(getEtDate(day));
-                    onDateChange(currentDayGregorian);
+                    contextOnDateChange(currentDayGregorian);
                     setGregDate(currentDayGregorian);
                   }
-                  setHoveredEtDate(null); // Clear hovered date on selection
+                  if (setHoveredEtDate) setHoveredEtDate(null); // Clear hovered date on selection
                 }}
                 onMouseEnter={() => {
-                  if (isRange && startDate && !endDate) {
+                  if (isRange && startDate && !endDate && setHoveredEtDate) {
                     setHoveredEtDate(getEtDate(day));
                   }
                 }}
                 onMouseLeave={() => {
-                  if (isRange && startDate && !endDate) {
+                  if (isRange && startDate && !endDate && setHoveredEtDate) {
                     setHoveredEtDate(null);
                   }
                 }}
@@ -196,44 +201,44 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
                   width: cellSize,
                   height: cellSize,
                   backgroundColor:
-                    isRangeStart(day)
+                    isDayRangeStart(day)
                       ? "primary.main"
-                      : isRangeEnd(day)
+                      : isDayRangeEnd(day)
                       ? "primary.main"
-                      : inRange(day)
+                      : isDayInRange(day)
                       ? "action.selected"
                       : isSelectedDate(day)
                       ? "primary.dark"
                       : "transparent",
                   borderRadius:
-                    isRangeStart(day)
+                    isDayRangeStart(day)
                       ? "50% 0 0 50%"
-                      : isRangeEnd(day)
+                      : isDayRangeEnd(day)
                       ? "0 50% 50% 0"
-                      : inRange(day)
+                      : isDayInRange(day)
                       ? "0"
                       : "50%",
                   color:
-                    isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
+                    isDayRangeStart(day) || isDayRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                   border:
                     day === today.Day &&
                     month === today.Month &&
                     year === today.Year &&
                     !isSelectedDate(day) &&
-                    !isRangeStart(day) &&
-                    !isRangeEnd(day) &&
-                    !inRange(day)
+                    !isDayRangeStart(day) &&
+                    !isDayRangeEnd(day) &&
+                    !isDayInRange(day)
                       ? `1px solid ${today.Month === month && today.Year === year ? 'primary.main' : 'transparent'}`
                       : "none",
                   "&:hover": {
                     backgroundColor:
-                      (isRangeStart(day) || isRangeEnd(day))
+                      (isDayRangeStart(day) || isDayRangeEnd(day))
                         ? "primary.dark"
-                        : inRange(day)
+                        : isDayInRange(day)
                         ? "action.hover"
                         : undefined,
                     color:
-                      isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
+                      isDayRangeStart(day) || isDayRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                   },
                 }}
               >

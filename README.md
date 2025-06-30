@@ -1,10 +1,10 @@
 # Habesha Date DatePicker
 
-Current Version: 0.0.1
+Current Version: 0.2.1
 
-`habesha-datepicker` is a React component for selecting Ethiopian dates. It's built on top of Material-UI and provides a culturally tailored date picker experience integrated seamlessly with other MUI components.
+An Ethiopian date picker component designed for React applications. It's built on top of Material-UI and provides a culturally tailored date picker experience integrated seamlessly with other MUI components.
 
-![Screenshot of DatePicker](YOUR_IMAGE_LINK_HERE)
+![Screenshot of DatePicker](https://drive.google.com/file/d/1XHGNh8F578IB9fY5F6RRaC1TvFuSdDer/view?usp=drive_link)
 Replace `YOUR_IMAGE_LINK_HERE` with the actual link to your image.
 
 ## Installation

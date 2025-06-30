@@ -44,10 +44,10 @@ const EthiopianDaysList_1 = __importDefault(require("./EthiopianDaysList"));
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 const EtLocalizationProvider_1 = require("../EtLocalizationProvider");
-const EthiopianDateCalendar = ({ isRange, startDate, endDate, }) => {
+const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, }) => {
     const { value, monthValue, setGregDate, gregDate } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
-    const [ethDate, setEthDate] = (0, react_1.useState)(today);
+    const [ethDate, setEthDate] = (0, react_1.useState)(initialViewDate ? EthiopianDateUtils_1.EthiopianDate.toEth(initialViewDate) : today);
     const [showYearList, setShowYearList] = (0, react_1.useState)(false);
     const { localType, getLocalMonthName } = (0, EtLocalizationProvider_1.useEtLocalization)();
     const incrementMonth = () => {
@@ -124,10 +124,13 @@ const EthiopianDateCalendar = ({ isRange, startDate, endDate, }) => {
         }
     };
     (0, react_1.useEffect)(() => {
-        if (value) {
+        if (initialViewDate) {
+            setEthDate(EthiopianDateUtils_1.EthiopianDate.toEth(initialViewDate));
+        }
+        else if (value && !isRange) {
             setEthDate(EthiopianDateUtils_1.EthiopianDate.toEth(value));
         }
-    }, [value]);
+    }, [value, isRange, initialViewDate]);
     (0, react_1.useEffect)(() => {
         if (!monthValue)
             return;

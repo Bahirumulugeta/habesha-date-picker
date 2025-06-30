@@ -18,6 +18,9 @@ interface EthiopianDateCalendarProps {
   startDate?: Date | null;
   endDate?: Date | null;
   initialViewDate?: Date | null;
+  hoveredDate?: Date | null;
+  setHoveredDate?: (date: Date | null) => void;
+  onDateChange: (date: Date | [Date | null, Date | null]) => void;
 }
 
 const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
@@ -25,6 +28,9 @@ const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
   startDate,
   endDate,
   initialViewDate,
+  hoveredDate,
+  setHoveredDate,
+  onDateChange,
 }) => {
   const { value, monthValue, setGregDate, gregDate } =
     useContext(EtDatePickerContext);
@@ -246,7 +252,16 @@ const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
             startYear={ethDate.Year}
           />
         ) : (
-          <EthiopianDaysList month={ethDate.Month} year={ethDate.Year} />
+          <EthiopianDaysList
+            month={ethDate.Month}
+            year={ethDate.Year}
+            isRange={isRange}
+            startDate={startDate}
+            endDate={endDate}
+            hoveredEtDate={hoveredDate ? EthiopianDate.toEth(hoveredDate) : null}
+            setHoveredEtDate={(ethDate) => setHoveredDate && setHoveredDate(ethDate ? EthiopianDate.toGreg(ethDate) : null)}
+            onDateChange={onDateChange}
+          />
         )}
       </Box>
     </Box>
