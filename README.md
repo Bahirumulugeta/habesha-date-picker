@@ -82,7 +82,7 @@ function MyRangeComponent() {
   );
 }
 ```
-![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=19TAm4V71Mm-SFMrw0nsXhA_RB95Ahw7)
+![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=19TAm4V71Mm-SFMrw0nsXhA_RB95Ahw7_)
 
 ---
 ## 🌍 Localization
