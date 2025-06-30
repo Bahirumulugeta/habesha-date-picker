@@ -115,7 +115,11 @@ const EtDatePicker: React.FC<EtDatePickerProps> = ({
         {...props}
         value={
           isRange
-            ? `${startDate ? format(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? format(endDate, "dd/MMM/yyyy") : "-"}`
+            ? (
+                dateType === "GC"
+                  ? `${startDate ? format(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? format(endDate, "dd/MMM/yyyy") : "-"}`
+                  : `${startDate ? EthiopianDate.formatEtDate(EthiopianDate.toEth(startDate), localType, getLocalMonthName) : "-"} - ${endDate ? EthiopianDate.formatEtDate(EthiopianDate.toEth(endDate), localType, getLocalMonthName) : "-"}`
+              )
             : date
             ? dateType === "GC"
               ? format(date, "dd/MMM/yyyy")

@@ -87,7 +87,9 @@ const EtDatePicker = (_a) => {
     }, [value, isRange]);
     return (react_2.default.createElement(react_2.default.Fragment, null,
         react_2.default.createElement(material_1.TextField, Object.assign({}, props, { value: isRange
-                ? `${startDate ? (0, format_1.default)(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? (0, format_1.default)(endDate, "dd/MMM/yyyy") : "-"}`
+                ? (dateType === "GC"
+                    ? `${startDate ? (0, format_1.default)(startDate, "dd/MMM/yyyy") : "-"} - ${endDate ? (0, format_1.default)(endDate, "dd/MMM/yyyy") : "-"}`
+                    : `${startDate ? EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(startDate), localType, getLocalMonthName) : "-"} - ${endDate ? EthiopianDateUtils_1.EthiopianDate.formatEtDate(EthiopianDateUtils_1.EthiopianDate.toEth(endDate), localType, getLocalMonthName) : "-"}`)
                 : date
                     ? dateType === "GC"
                         ? (0, format_1.default)(date, "dd/MMM/yyyy")

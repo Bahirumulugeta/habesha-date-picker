@@ -310,13 +310,35 @@ export namespace EthiopianDate {
   }
 
   export function addDays(etDate: EtDate, days: number): EtDate {
-    if (!isValid(etDate))
-      throw new Error(
-        `Invalid ethiopian date ${etDate.Day}-${etDate.Month}-${etDate.Year}`
-      );
-
-    return createEthiopianDate(getDayNoEthiopian(etDate) + 1 + days);
+    const newGregDate = toGreg(etDate);
+    newGregDate.setDate(newGregDate.getDate() + days);
+    return toEth(newGregDate);
   }
+
+  export function addMonth(etDate: EtDate, months: number): EtDate {
+    let newMonth = etDate.Month + months;
+    let newYear = etDate.Year;
+
+    while (newMonth > 13) {
+      newMonth -= 13;
+      newYear++;
+    }
+    while (newMonth < 1) {
+      newMonth += 13;
+      newYear--;
+    }
+
+    // Handle Pagume month length if it's the 13th month
+    if (newMonth === 13) {
+      const daysInPagume = ethiopianMonthLength(newMonth, newYear);
+      if (etDate.Day > daysInPagume) {
+        return { Year: newYear, Month: newMonth, Day: daysInPagume };
+      }
+    }
+
+    return { Year: newYear, Month: newMonth, Day: etDate.Day };
+  }
+
   export function ethiopianYearDifference(
     d1: Date,
     d2: Date,

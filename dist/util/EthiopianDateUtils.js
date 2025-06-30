@@ -271,11 +271,32 @@ var EthiopianDate;
     }
     EthiopianDate.addYears = addYears;
     function addDays(etDate, days) {
-        if (!isValid(etDate))
-            throw new Error(`Invalid ethiopian date ${etDate.Day}-${etDate.Month}-${etDate.Year}`);
-        return createEthiopianDate(getDayNoEthiopian(etDate) + 1 + days);
+        const newGregDate = toGreg(etDate);
+        newGregDate.setDate(newGregDate.getDate() + days);
+        return toEth(newGregDate);
     }
     EthiopianDate.addDays = addDays;
+    function addMonth(etDate, months) {
+        let newMonth = etDate.Month + months;
+        let newYear = etDate.Year;
+        while (newMonth > 13) {
+            newMonth -= 13;
+            newYear++;
+        }
+        while (newMonth < 1) {
+            newMonth += 13;
+            newYear--;
+        }
+        // Handle Pagume month length if it's the 13th month
+        if (newMonth === 13) {
+            const daysInPagume = ethiopianMonthLength(newMonth, newYear);
+            if (etDate.Day > daysInPagume) {
+                return { Year: newYear, Month: newMonth, Day: daysInPagume };
+            }
+        }
+        return { Year: newYear, Month: newMonth, Day: etDate.Day };
+    }
+    EthiopianDate.addMonth = addMonth;
     function ethiopianYearDifference(d1, d2, upperBoundInclusive) {
         let date1 = toEth(d1);
         let date2 = toEth(d2);

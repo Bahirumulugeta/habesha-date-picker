@@ -28,6 +28,7 @@ export declare namespace EthiopianDate {
     function isValid(date: EtDate): boolean;
     function addYears(etDate: EtDate, years: number): EtDate;
     function addDays(etDate: EtDate, days: number): EtDate;
+    function addMonth(etDate: EtDate, months: number): EtDate;
     function ethiopianYearDifference(d1: Date, d2: Date, upperBoundInclusive: boolean): number;
     function fullEthiopianYearDifference(d1: Date, d2: Date, upperBoundInclusive: boolean): {
         years: number;

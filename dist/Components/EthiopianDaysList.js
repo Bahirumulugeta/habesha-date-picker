@@ -76,6 +76,8 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, hoveredEt
             setSelectedDate(EthiopianDateUtils_1.EthiopianDate.toEth(value));
     }, [value, isRange]);
     const isSelectedDate = (day) => {
+        if (isRange)
+            return false;
         return (day === (selectedDate === null || selectedDate === void 0 ? void 0 : selectedDate.Day) &&
             month === (selectedDate === null || selectedDate === void 0 ? void 0 : selectedDate.Month) &&
             year === (selectedDate === null || selectedDate === void 0 ? void 0 : selectedDate.Year));

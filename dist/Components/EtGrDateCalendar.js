@@ -10,6 +10,7 @@ const EthiopianDateCalendar_1 = __importDefault(require("./EthiopianDateCalendar
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const react_2 = __importDefault(require("react"));
 const styles_1 = require("@mui/material/styles");
+const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 // Styled component for the date range
 const StyledDay = (0, styles_1.styled)(x_date_pickers_1.PickersDay)(({ theme, isRangeStart, isRangeEnd, inRange }) => (Object.assign(Object.assign(Object.assign(Object.assign({}, (inRange && {
     backgroundColor: theme.palette.action.selected, // A light background for dates within the range
@@ -63,11 +64,11 @@ const EtGrDateCalendar = () => {
         react_2.default.createElement(react_2.default.Fragment, null,
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", mr: 1 },
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "Start Date"),
-                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate })),
+                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate, hoveredDate: hoveredDate, setHoveredDate: setHoveredDate, onDateChange: onDateChange, onMonthChange: setStartMonth })),
             react_2.default.createElement(material_1.Divider, { orientation: "vertical", flexItem: true }),
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", ml: 1, pr: 4 },
                 react_2.default.createElement(material_1.Typography, { variant: "subtitle1", sx: { mb: 1 } }, "End Date"),
-                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate, initialViewDate: startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : null })))) : (
+                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate, initialViewDate: startDate ? EthiopianDateUtils_1.EthiopianDate.toGreg(EthiopianDateUtils_1.EthiopianDate.addMonth(EthiopianDateUtils_1.EthiopianDate.toEth(startDate), 1)) : null, hoveredDate: hoveredDate, setHoveredDate: setHoveredDate, onDateChange: onDateChange, onMonthChange: setEndMonth })))) : (
         // Gregorian range pickers (dateType === "GC")
         react_2.default.createElement(react_2.default.Fragment, null,
             react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", mr: 1 },
@@ -146,7 +147,7 @@ const EtGrDateCalendar = () => {
         // Single date mode
         react_2.default.createElement(react_2.default.Fragment, null,
             showEthiopianCalendar && (react_2.default.createElement(material_1.Box, { width: 295, display: "flex", flexDirection: "column", mr: showGregorianCalendar ? 1 : 0 },
-                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate }))),
+                react_2.default.createElement(EthiopianDateCalendar_1.default, { isRange: isRange, startDate: startDate, endDate: endDate, hoveredDate: hoveredDate, setHoveredDate: setHoveredDate, onDateChange: onDateChange, onMonthChange: onMonthChange }))),
             showEthiopianCalendar && showGregorianCalendar && (react_2.default.createElement(material_1.Divider, { orientation: "vertical", flexItem: true })),
             showGregorianCalendar && (react_2.default.createElement(material_1.Box, { width: 295, mr: showEthiopianCalendar ? 0 : 2 },
                 react_2.default.createElement(material_1.Box, { width: 295, pr: 4 },
@@ -163,7 +164,6 @@ const EtGrDateCalendar = () => {
                         }, disablePast: disablePast, minDate: minDate, maxDate: maxDate, slots: { day: StyledDay }, slotProps: {
                             day: (ownerState) => (Object.assign(Object.assign({}, ownerState), { isRangeStart: isRange && startDate && ownerState.day.getTime() === startDate.getTime(), isRangeEnd: isRange && endDate && ownerState.day.getTime() === endDate.getTime(), inRange: isRange && startDate && endDate && ownerState.day.getTime() > startDate.getTime() && ownerState.day.getTime() < endDate.getTime() })),
                         }, openTo: "day", views: ['month', 'year', 'day'] }))))))),
-        react_2.default.createElement(material_1.Box, null,
-            react_2.default.createElement(material_1.Button, { sx: { ml: 2, mt: showGregorianCalendar && !isRange ? -7 : 0 }, onClick: handleTodayButtonClick }, "Today"))));
+        react_2.default.createElement(material_1.Box, null, !isRange && (react_2.default.createElement(material_1.Button, { sx: { ml: 2, mt: showGregorianCalendar && !isRange ? -7 : 0 }, onClick: handleTodayButtonClick }, "Today")))));
 };
 exports.default = EtGrDateCalendar;

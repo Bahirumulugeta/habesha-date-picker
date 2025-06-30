@@ -92,6 +92,7 @@ const EthiopianDaysList: React.FC<EthiopianDaysListProps> = ({
   }, [value, isRange]);
 
   const isSelectedDate = (day: number): boolean => {
+    if (isRange) return false;
     return (
       day === selectedDate?.Day &&
       month === selectedDate?.Month &&

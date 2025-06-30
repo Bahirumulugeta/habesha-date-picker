@@ -21,6 +21,7 @@ interface EthiopianDateCalendarProps {
   hoveredDate?: Date | null;
   setHoveredDate?: (date: Date | null) => void;
   onDateChange: (date: Date | [Date | null, Date | null]) => void;
+  onMonthChange?: (date: Date) => void;
 }
 
 const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
@@ -31,6 +32,7 @@ const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
   hoveredDate,
   setHoveredDate,
   onDateChange,
+  onMonthChange,
 }) => {
   const { value, monthValue, setGregDate, gregDate } =
     useContext(EtDatePickerContext);
@@ -44,107 +46,36 @@ const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps> = ({
     const gDate = EthiopianDate.toGreg({ ...ethDate, Day: 15 });
 
     if (ethDate.Month === 13) {
-      setEthDate({ ...ethDate, Month: 1, Year: ethDate.Year + 1, Day: 15 });
-      if (!gregDate)
-        return setGregDate(
-          EthiopianDate.toGreg({
-            ...ethDate,
-            Month: 1,
-            Year: ethDate.Year + 1,
-          })
-        );
-
-      if (gregDate.getMonth() === 8) {
-        const newDate: Date = new Date(gregDate);
-        newDate.setMonth(newDate.getMonth());
-        setGregDate(newDate);
-        return;
-      }
-      const newDate: Date = new Date(gregDate);
-      newDate.setMonth(newDate.getMonth() + 1);
-
-      setGregDate(newDate);
+      const newEthDate = { ...ethDate, Month: 1, Year: ethDate.Year + 1, Day: 15 };
+      setEthDate(newEthDate);
+      onMonthChange?.(EthiopianDate.toGreg(newEthDate));
     } else {
-      setEthDate((prev: EthiopianDate.EtDate) => ({
-        ...prev,
-        Month: prev.Month + 1,
-        Day: 15,
-      }));
-      if (ethDate.Month === 12) {
-        if (!gregDate) return setGregDate(EthiopianDate.toGreg({ ...ethDate }));
-        const newDate: Date = new Date(gregDate);
-        newDate.setMonth(newDate.getMonth());
-        setGregDate(newDate);
-      } else {
-        if (!gregDate)
-          return setGregDate(
-            EthiopianDate.toGreg({
-              ...ethDate,
-              Month: ethDate.Month + 1,
-              Day: 15,
-            })
-          );
-
-        if (
-          gDate.getFullYear() < gregDate.getFullYear() ||
-          (gDate.getFullYear() === gregDate.getFullYear() &&
-            gDate.getMonth() < gregDate.getMonth())
-        )
-          return;
-
-        const newDate: Date = new Date(gregDate);
-        newDate.setMonth(newDate.getMonth() + 1);
-        setGregDate(newDate);
-      }
+      const newEthDate = { ...ethDate, Month: ethDate.Month + 1, Day: 15 };
+      setEthDate(newEthDate);
+      onMonthChange?.(EthiopianDate.toGreg(newEthDate));
     }
+
+    if (!gregDate) return setGregDate(EthiopianDate.toGreg(ethDate));
+    const newGregDate = new Date(gregDate);
+    newGregDate.setMonth(newGregDate.getMonth() + 1);
+    setGregDate(newGregDate);
   };
 
   const decrementMonth = () => {
     if (ethDate.Month === 1) {
-      setEthDate({ ...ethDate, Year: ethDate.Year - 1, Month: 13 });
-      if (!gregDate)
-        return setGregDate(
-          EthiopianDate.toGreg({ ...ethDate, Year: ethDate.Year - 1, Month: 13 })
-        );
-      const newDate: Date = new Date(gregDate);
-      newDate.setMonth(newDate.getMonth());
-      setGregDate(newDate);
+      const newEthDate = { ...ethDate, Year: ethDate.Year - 1, Month: 13, Day: 15 };
+      setEthDate(newEthDate);
+      onMonthChange?.(EthiopianDate.toGreg(newEthDate));
     } else {
-      if (!gregDate)
-        return setGregDate(
-          EthiopianDate.toGreg({
-            ...ethDate,
-            Month: ethDate.Month - 1,
-            Day: 15,
-          })
-        );
-      if (gregDate.getMonth() === 7 && ethDate.Month === 13) {
-        const newDate: Date = new Date(gregDate);
-        newDate.setMonth(newDate.getMonth());
-        setGregDate(newDate);
-        setEthDate((prev) => ({ ...prev, Month: prev.Month - 1 }));
-        return;
-      }
-
-      const gDate = EthiopianDate.toGreg({ ...ethDate, Day: 15 });
-
-      if (
-        gDate.getFullYear() < gregDate.getFullYear() ||
-        (gDate.getFullYear() === gregDate.getFullYear() &&
-          gDate.getMonth() < gregDate.getMonth())
-      ) {
-        const newDate: Date = new Date(gregDate);
-        newDate.setMonth(newDate.getMonth() - 2);
-        setGregDate(newDate);
-        setEthDate((prev) => ({ ...prev, Month: prev.Month }));
-        return;
-      }
-
-      const newDate: Date = new Date(gregDate);
-      newDate.setMonth(newDate.getMonth() - 1);
-      setGregDate(newDate);
-      setEthDate((prev) => ({ ...prev, Month: prev.Month - 1, Day: 15 }));
+      const newEthDate = { ...ethDate, Month: ethDate.Month - 1, Day: 15 };
+      setEthDate(newEthDate);
+      onMonthChange?.(EthiopianDate.toGreg(newEthDate));
     }
+
+    if (!gregDate) return setGregDate(EthiopianDate.toGreg(ethDate));
+    const newGregDate = new Date(gregDate);
+    newGregDate.setMonth(newGregDate.getMonth() - 1);
+    setGregDate(newGregDate);
   };
 
   useEffect(() => {

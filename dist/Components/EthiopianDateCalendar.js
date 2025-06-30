@@ -44,7 +44,7 @@ const EthiopianDaysList_1 = __importDefault(require("./EthiopianDaysList"));
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 const EtLocalizationProvider_1 = require("../EtLocalizationProvider");
-const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, hoveredDate, setHoveredDate, onDateChange, }) => {
+const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, hoveredDate, setHoveredDate, onDateChange, onMonthChange, }) => {
     const { value, monthValue, setGregDate, gregDate } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
     const [ethDate, setEthDate] = (0, react_1.useState)(initialViewDate ? EthiopianDateUtils_1.EthiopianDate.toEth(initialViewDate) : today);
@@ -53,75 +53,37 @@ const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, h
     const incrementMonth = () => {
         const gDate = EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Day: 15 }));
         if (ethDate.Month === 13) {
-            setEthDate(Object.assign(Object.assign({}, ethDate), { Month: 1, Year: ethDate.Year + 1, Day: 15 }));
-            if (!gregDate)
-                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Month: 1, Year: ethDate.Year + 1 })));
-            if (gregDate.getMonth() === 8) {
-                const newDate = new Date(gregDate);
-                newDate.setMonth(newDate.getMonth());
-                setGregDate(newDate);
-                return;
-            }
-            const newDate = new Date(gregDate);
-            newDate.setMonth(newDate.getMonth() + 1);
-            setGregDate(newDate);
+            const newEthDate = Object.assign(Object.assign({}, ethDate), { Month: 1, Year: ethDate.Year + 1, Day: 15 });
+            setEthDate(newEthDate);
+            onMonthChange === null || onMonthChange === void 0 ? void 0 : onMonthChange(EthiopianDateUtils_1.EthiopianDate.toGreg(newEthDate));
         }
         else {
-            setEthDate((prev) => (Object.assign(Object.assign({}, prev), { Month: prev.Month + 1, Day: 15 })));
-            if (ethDate.Month === 12) {
-                if (!gregDate)
-                    return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign({}, ethDate)));
-                const newDate = new Date(gregDate);
-                newDate.setMonth(newDate.getMonth());
-                setGregDate(newDate);
-            }
-            else {
-                if (!gregDate)
-                    return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month + 1, Day: 15 })));
-                if (gDate.getFullYear() < gregDate.getFullYear() ||
-                    (gDate.getFullYear() === gregDate.getFullYear() &&
-                        gDate.getMonth() < gregDate.getMonth()))
-                    return;
-                const newDate = new Date(gregDate);
-                newDate.setMonth(newDate.getMonth() + 1);
-                setGregDate(newDate);
-            }
+            const newEthDate = Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month + 1, Day: 15 });
+            setEthDate(newEthDate);
+            onMonthChange === null || onMonthChange === void 0 ? void 0 : onMonthChange(EthiopianDateUtils_1.EthiopianDate.toGreg(newEthDate));
         }
+        if (!gregDate)
+            return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(ethDate));
+        const newGregDate = new Date(gregDate);
+        newGregDate.setMonth(newGregDate.getMonth() + 1);
+        setGregDate(newGregDate);
     };
     const decrementMonth = () => {
         if (ethDate.Month === 1) {
-            setEthDate(Object.assign(Object.assign({}, ethDate), { Year: ethDate.Year - 1, Month: 13 }));
-            if (!gregDate)
-                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Year: ethDate.Year - 1, Month: 13 })));
-            const newDate = new Date(gregDate);
-            newDate.setMonth(newDate.getMonth());
-            setGregDate(newDate);
+            const newEthDate = Object.assign(Object.assign({}, ethDate), { Year: ethDate.Year - 1, Month: 13, Day: 15 });
+            setEthDate(newEthDate);
+            onMonthChange === null || onMonthChange === void 0 ? void 0 : onMonthChange(EthiopianDateUtils_1.EthiopianDate.toGreg(newEthDate));
         }
         else {
-            if (!gregDate)
-                return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month - 1, Day: 15 })));
-            if (gregDate.getMonth() === 7 && ethDate.Month === 13) {
-                const newDate = new Date(gregDate);
-                newDate.setMonth(newDate.getMonth());
-                setGregDate(newDate);
-                setEthDate((prev) => (Object.assign(Object.assign({}, prev), { Month: prev.Month - 1 })));
-                return;
-            }
-            const gDate = EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Day: 15 }));
-            if (gDate.getFullYear() < gregDate.getFullYear() ||
-                (gDate.getFullYear() === gregDate.getFullYear() &&
-                    gDate.getMonth() < gregDate.getMonth())) {
-                const newDate = new Date(gregDate);
-                newDate.setMonth(newDate.getMonth() - 2);
-                setGregDate(newDate);
-                setEthDate((prev) => (Object.assign(Object.assign({}, prev), { Month: prev.Month })));
-                return;
-            }
-            const newDate = new Date(gregDate);
-            newDate.setMonth(newDate.getMonth() - 1);
-            setGregDate(newDate);
-            setEthDate((prev) => (Object.assign(Object.assign({}, prev), { Month: prev.Month - 1, Day: 15 })));
+            const newEthDate = Object.assign(Object.assign({}, ethDate), { Month: ethDate.Month - 1, Day: 15 });
+            setEthDate(newEthDate);
+            onMonthChange === null || onMonthChange === void 0 ? void 0 : onMonthChange(EthiopianDateUtils_1.EthiopianDate.toGreg(newEthDate));
         }
+        if (!gregDate)
+            return setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(ethDate));
+        const newGregDate = new Date(gregDate);
+        newGregDate.setMonth(newGregDate.getMonth() - 1);
+        setGregDate(newGregDate);
     };
     (0, react_1.useEffect)(() => {
         if (initialViewDate) {

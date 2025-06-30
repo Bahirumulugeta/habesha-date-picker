@@ -7,6 +7,7 @@ interface EthiopianDateCalendarProps {
     hoveredDate?: Date | null;
     setHoveredDate?: (date: Date | null) => void;
     onDateChange: (date: Date | [Date | null, Date | null]) => void;
+    onMonthChange?: (date: Date) => void;
 }
 declare const EthiopianDateCalendar: React.FC<EthiopianDateCalendarProps>;
 export default EthiopianDateCalendar;

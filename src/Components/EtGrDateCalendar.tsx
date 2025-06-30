@@ -6,6 +6,7 @@ import EthiopianDateCalendar from "./EthiopianDateCalendar";
 import { EtDatePickerContext } from "../EtDatePickerContext";
 import React from "react";
 import { styled } from "@mui/material/styles";
+import { EthiopianDate } from "../util/EthiopianDateUtils";
 
 interface CustomPickerDayProps extends PickersDayProps<Date> {
   isRangeStart?: boolean;
@@ -97,6 +98,7 @@ const EtGrDateCalendar = () => {
                   hoveredDate={hoveredDate}
                   setHoveredDate={setHoveredDate}
                   onDateChange={onDateChange}
+                  onMonthChange={setStartMonth}
                 />
               </Box>
               <Divider orientation="vertical" flexItem />
@@ -106,10 +108,11 @@ const EtGrDateCalendar = () => {
                   isRange={isRange}
                   startDate={startDate}
                   endDate={endDate}
-                  initialViewDate={startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : null}
+                  initialViewDate={startDate ? EthiopianDate.toGreg(EthiopianDate.addMonth(EthiopianDate.toEth(startDate), 1)) : null}
                   hoveredDate={hoveredDate}
                   setHoveredDate={setHoveredDate}
                   onDateChange={onDateChange}
+                  onMonthChange={setEndMonth}
                 />
               </Box>
             </>
@@ -254,6 +257,7 @@ const EtGrDateCalendar = () => {
                   hoveredDate={hoveredDate}
                   setHoveredDate={setHoveredDate}
                   onDateChange={onDateChange}
+                  onMonthChange={onMonthChange}
                 />
               </Box>
             )}
@@ -300,12 +304,15 @@ const EtGrDateCalendar = () => {
         )}
       </Box>
       <Box>
-        <Button
-          sx={{ ml: 2, mt: showGregorianCalendar && !isRange ? -7 : 0 }}
-          onClick={handleTodayButtonClick}
-        >
-          Today
-        </Button>
+        {/* Hide Today button if it is a range selection */}
+        {!isRange && (
+          <Button
+            sx={{ ml: 2, mt: showGregorianCalendar && !isRange ? -7 : 0 }}
+            onClick={handleTodayButtonClick}
+          >
+            Today
+          </Button>
+        )}
       </Box>
     </Box>
   );
