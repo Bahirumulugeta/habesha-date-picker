@@ -1,72 +1,70 @@
-# Habesha Date DatePicker
+# 🇪🇹 Habesha DatePicker
 
-Current Version: 0.2.1
+**Version: 0.2.2**
 
-An Ethiopian date picker component designed for React applications. It's built on top of Material-UI and provides a culturally tailored date picker experience integrated seamlessly with other MUI components.
+A beautiful and culturally-aware Ethiopian calendar component built for modern React applications. Powered by **Material-UI**, `habesha-datepicker` simplifies date selection, supporting the Ethiopian calendar, Afan Oromo labels, and the Gregorian calendar.
 
-![Screenshot of DatePicker](https://drive.google.com/file/d/1XHGNh8F578IB9fY5F6RRaC1TvFuSdDer/view?usp=drive_link)
-Replace `YOUR_IMAGE_LINK_HERE` with the actual link to your image.
+![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=1XHGNh8F578IB9fY5F6RRaC1TvFuSdDer)
 
-## Installation
+---
 
-You can install the package using npm:
+## 🚀 Installation
 
-```console
+To get started, install the package via npm:
+
+```bash
 npm install habesha-datepicker
 ```
 
-### Peer Dependencies
+**Required Peer Dependencies:**
 
-```code
-"peerDependencies": {
-  "@emotion/react": "^11.11.0",
-  "@emotion/styled": "^11.11.0",
-  "@mui/icons-material": "^5.14.6",
-  "@mui/material": "^5.14.6",
-  "@mui/x-date-pickers": "^6.11.2",
-  "date-fns": "^2.30.0",
-  "react": "^18.2.0",
-  "react-dom": "^18.2.0"
-}
+This package relies on the following peer dependencies. Please ensure they are also installed in your project:
+
+```
+"@emotion/react": "^11.11.0",
+"@emotion/styled": "^11.11.0",
+"@mui/icons-material": "^5.14.6",
+"@mui/material": "^5.14.6",
+"@mui/x-date-pickers": "^6.11.2",
+"date-fns": "^2.30.0",
+"react": "^18.2.0",
+"react-dom": "^18.2.0"
 ```
 
-You can install them using:
+You can install them all at once using this command:
 
-```console
+```bash
 npm install @mui/icons-material @mui/material @mui/x-date-pickers date-fns react react-dom
 ```
 
-## Usage
+## 🧠 Usage
 
-### Basic Usage with `EtDatePicker` (Single Date Selection)
+### Single Date Picker
 
-To use the date picker for single date selection:
+Use it for selecting a single date, just like any standard date picker.
 
 ```tsx
 import React, { useState } from "react";
 import EtDatePicker from "habesha-datepicker";
 
 function MyComponent() {
-  const [date, setDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   return (
     <EtDatePicker
-      label="Document Date"
-      onChange={(selectedDate) => {
-        setDate(selectedDate as Date | null); // Cast if necessary based on your exact onChange signature
-      }}
-      value={date}
-      minDate={new Date("2023-08-20")}
-      maxDate={new Date("2023-08-26")}
-      // other TextField props here, except InputProps
+      label="Select Document Date"
+      value={selectedDate}
+      onChange={(date) => setSelectedDate(date as Date | null)}
+      minDate={new Date("YYYY-MM-DD")}
+      maxDate={new Date("YYYY-MM-DD")}
     />
   );
 }
 ```
 
-### Range Date Selection
+### Range Picker (Start → End)
 
-To enable date range selection, set the `isRange` prop to `true`. The `value` prop will then be an array `[startDate, endDate]` and `onChange` will provide a similar array.
+Need to select a date range? It's straightforward.
 
 ```tsx
 import React, { useState } from "react";
@@ -77,132 +75,97 @@ function MyRangeComponent() {
 
   return (
     <EtDatePicker
-      label="Date Range"
-      isRange={true}
-      onChange={(selectedRange) => {
-        setDateRange(selectedRange as [Date | null, Date | null]);
-      }}
+      label="Select Date Range"
+      isRange
       value={dateRange}
-      // You can still use minDate and maxDate to restrict the overall range
+      onChange={(range) => setDateRange(range as [Date | null, Date | null])}
     />
   );
 }
 ```
 
-## Localization Support in `Version 0.1.1`
+## 🌍 Localization
 
-Starting from version 0.1.7, `habesha-datepicker` introduces localization support for different Ethiopian localizations. This feature allows a more tailored experience for users.
+Since version 0.1.7, the date picker offers robust localization options:
 
+*   **GC** – Gregorian Calendar
+*   **EC** – Ethiopian Calendar (Amharic)
+*   **AO** – Afan Oromo
+*   **CUSTOM** – Define your own calendar labels
 
-#### 1. First, you need to import the EtLocalizationProvider from the habesha-datepicker package.
-
-```tsx
-
-import { EtLocalizationProvider } from 'habesha-datepicker';
-
-```
-
-
-#### 2. Wrap Your Application or Component:
-Use the EtLocalizationProvider to wrap your entire application or just the section where the date picker is used. This will ensure that all date pickers within this context are localized.
+### Step 1: Wrap your application with the provider
 
 ```tsx
+import { EtLocalizationProvider } from "habesha-datepicker";
 
 function MyApp({ children }) {
   return (
-    <EtLocalizationProvider localType="EC">
+    <EtLocalizationProvider localType="EC"> {/* or 'AO', 'GC', 'CUSTOM' */}
       {children}
     </EtLocalizationProvider>
   );
 }
 ```
-#### 3. Configure the Localization Provider:
-The EtLocalizationProvider accepts the following props to configure the localization:
 
-`localType:` This can be set to "GC" (Gregorian Calendar), "EC" (Amharic - Ethiopian Calendar), "AO" (Afan Oromo), or "CUSTOM". It defines the type of localization you want to apply. "GC", "EC" and "AO" are predefined localizations, while "CUSTOM" allows for more personalized configurations.
+### Step 2: Utilize CUSTOM localization (optional)
 
-`getLocalMonthName:` This optional function is used only when localType is set to "CUSTOM". It allows you to provide a custom function to return the name of the month based on the month number.
+For full control over month names, use the `CUSTOM` type and provide your own `getLocalMonthName` function:
 
 ```tsx
-function MyApp() {
-  const getCustomMonthName = (month: number) => {
-    // Define custom month names
-    const customMonthNames = ["Custom Month 1", "Custom Month 2", ...];
-    return customMonthNames[month - 1];
-  };
-
-  return (
-    <EtLocalizationProvider localType="CUSTOM" getLocalMonthName={getCustomMonthName}>
-      {children}
-    </EtLocalizationProvider>
-  );
-}
-
-
+<EtLocalizationProvider
+  localType="CUSTOM"
+  getLocalMonthName={(month) => ["Custom Month 1", "Custom Month 2", "Custom Month 3", "Custom Month 4", "Custom Month 5", "Custom Month 6", "Custom Month 7", "Custom Month 8", "Custom Month 9", "Custom Month 10", "Custom Month 11", "Custom Month 12", "Custom Month 13"][month - 1]}
+>
+  {children}
+</EtLocalizationProvider>
 ```
 
+## 🗓 EtDateViewer
 
-### Using `EtDateViewer`
+If you simply need to display a date without the ability to edit it, the `EtDateViewer` component is perfect.
 
 ```tsx
 import { EtDateViewer } from "habesha-datepicker";
 
-<EtDateViewer date={new Date()}  sx={{ color: "red" }} variant="h6" />
-
-```
- 
-
-## EthiopianDateUtil
-
-`EthiopianDateUtil` is a utility module that provides various functions for working with Ethiopian dates. Here are some of the key functionalities:
-
-### Creating an Ethiopian Date
-
-```typescript
-import { EthiopianDate } from 'habesha-datepicker';
-
-const date = EthiopianDate.createEthiopianDateFromParts(23, 7, 2013);
+<EtDateViewer date={new Date()} sx={{ color: "blue" }} variant="h6" />;
 ```
 
-### Convert To and From Gregorian
+## 🧰 EthiopianDateUtil
 
-```typescript
-import { EthiopianDate } from 'habesha-datepicker';
+This utility provides helpful functions for working with Ethiopian dates directly.
 
-const etDate = EthiopianDate.toEth(new Date());
-const grDate = EthiopianDate.toGreg(etDate);
+### Create a date manually
+
+```ts
+import { EthiopianDate } from "habesha-datepicker";
+
+const newEthiopianDate = EthiopianDate.createEthiopianDateFromParts(23, 7, 2013); // Day, Month, Year
 ```
 
-### Getting Ethiopian Months
+### Convert between calendars
 
-```typescript
-import { EthiopianDate } from 'habesha-datepicker';
+```ts
+import { EthiopianDate } from "habesha-datepicker";
 
-const months = EthiopianDate.ethMonths;
+const ethiopianDate = EthiopianDate.toEth(new Date()); // Converts Gregorian Date to Ethiopian Date
+const gregorianDate = EthiopianDate.toGreg({ Day: 23, Month: 7, Year: 2013 }); // Converts Ethiopian Date to Gregorian Date
 ```
 
-### Examples
+### Get all month names
 
-#### Convert a Gregorian Date to Ethiopian Date
+Access the array of Ethiopian month names:
 
-```typescript
-const etDate = EthiopianDate.toEth(new Date());
+```ts
+import { EthiopianDate } from "habesha-datepicker";
+
+const allEthiopianMonths = EthiopianDate.ethMonths;
 ```
 
-#### Convert an Ethiopian Date to Gregorian Date
+## 🛠 Support & Contributions
 
-```typescript
-const grDate = EthiopianDate.toGreg({ Day: 23, Month: 7, Year: 2013 });
-```
+Encounter a bug, have an idea for improvement, or want to add a new feature? Your contributions are welcome!
 
-#### Get the Names of Ethiopian Months
+*   **Open an issue:** Share your findings or suggestions.
+*   **Create a pull request:** Directly contribute to the codebase.
 
-```typescript
-const months = EthiopianDate.ethMonths;
-```
-
-For more functionalities, refer to the source code.
-
-## Support and Contributions
-
-Feel free to open issues or PRs if you find any problems or have suggestions for improvements.
+Your support helps make this project better for everyone! 🙌
