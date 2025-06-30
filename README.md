@@ -1,6 +1,6 @@
 # 🇪🇹 Habesha DatePicker
 
-**Version: 0.2.2**
+**Version: 0.2.3**
 
 A beautiful and culturally-aware Ethiopian calendar component built for modern React applications. Powered by **Material-UI**, `habesha-datepicker` simplifies date selection, supporting the Ethiopian calendar, Afan Oromo labels, and the Gregorian calendar.
 
