@@ -90,7 +90,14 @@ const EtGrDateCalendar = () => {
             <>
               <Box width={295} display="flex" flexDirection="column" mr={1}>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Start Date</Typography>
-                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+                <EthiopianDateCalendar
+                  isRange={isRange}
+                  startDate={startDate}
+                  endDate={endDate}
+                  hoveredDate={hoveredDate}
+                  setHoveredDate={setHoveredDate}
+                  onDateChange={onDateChange}
+                />
               </Box>
               <Divider orientation="vertical" flexItem />
               <Box width={295} display="flex" flexDirection="column" ml={1} pr={4}>
@@ -100,6 +107,9 @@ const EtGrDateCalendar = () => {
                   startDate={startDate}
                   endDate={endDate}
                   initialViewDate={startDate ? new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1) : null}
+                  hoveredDate={hoveredDate}
+                  setHoveredDate={setHoveredDate}
+                  onDateChange={onDateChange}
                 />
               </Box>
             </>
@@ -237,7 +247,14 @@ const EtGrDateCalendar = () => {
                 flexDirection="column"
                 mr={showGregorianCalendar ? 1 : 0}
               >
-                <EthiopianDateCalendar isRange={isRange} startDate={startDate} endDate={endDate} />
+                <EthiopianDateCalendar
+                  isRange={isRange}
+                  startDate={startDate}
+                  endDate={endDate}
+                  hoveredDate={hoveredDate}
+                  setHoveredDate={setHoveredDate}
+                  onDateChange={onDateChange}
+                />
               </Box>
             )}
             {showEthiopianCalendar && showGregorianCalendar && (

@@ -44,7 +44,7 @@ const EthiopianDaysList_1 = __importDefault(require("./EthiopianDaysList"));
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 const EtLocalizationProvider_1 = require("../EtLocalizationProvider");
-const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, }) => {
+const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, hoveredDate, setHoveredDate, onDateChange, }) => {
     const { value, monthValue, setGregDate, gregDate } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
     const [ethDate, setEthDate] = (0, react_1.useState)(initialViewDate ? EthiopianDateUtils_1.EthiopianDate.toEth(initialViewDate) : today);
@@ -191,6 +191,6 @@ const EthiopianDateCalendar = ({ isRange, startDate, endDate, initialViewDate, }
                 setEthDate(Object.assign(Object.assign({}, ethDate), { Year: selectedYear }));
                 setGregDate(EthiopianDateUtils_1.EthiopianDate.toGreg(Object.assign(Object.assign({}, ethDate), { Year: selectedYear })));
                 setShowYearList(false);
-            }, startYear: ethDate.Year })) : (react_1.default.createElement(EthiopianDaysList_1.default, { month: ethDate.Month, year: ethDate.Year })))));
+            }, startYear: ethDate.Year })) : (react_1.default.createElement(EthiopianDaysList_1.default, { month: ethDate.Month, year: ethDate.Year, isRange: isRange, startDate: startDate, endDate: endDate, hoveredEtDate: hoveredDate ? EthiopianDateUtils_1.EthiopianDate.toEth(hoveredDate) : null, setHoveredEtDate: (ethDate) => setHoveredDate && setHoveredDate(ethDate ? EthiopianDateUtils_1.EthiopianDate.toGreg(ethDate) : null), onDateChange: onDateChange })))));
 };
 exports.default = EthiopianDateCalendar;

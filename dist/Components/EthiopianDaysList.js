@@ -38,7 +38,7 @@ const react_1 = __importStar(require("react"));
 const EtDatePickerContext_1 = require("../EtDatePickerContext");
 const EthiopianDateUtils_1 = require("../util/EthiopianDateUtils");
 const EtLocalizationProvider_1 = require("../EtLocalizationProvider");
-const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
+const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, hoveredEtDate, setHoveredEtDate, onDateChange, }) => {
     const { localType } = (0, EtLocalizationProvider_1.useEtLocalization)();
     const cellSize = "36px";
     const gap = 0.5;
@@ -46,9 +46,8 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
         ? EthiopianDateUtils_1.EthiopianDate.shortDays
         : EthiopianDateUtils_1.EthiopianDate.englishShortDays;
     const today = EthiopianDateUtils_1.EthiopianDate.toEth(new Date());
-    const { onDateChange, setGregDate, value, disableFuture, disablePast, minDate, maxDate, } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
+    const { onDateChange: contextOnDateChange, setGregDate, value, disableFuture, disablePast, minDate, maxDate, } = (0, react_1.useContext)(EtDatePickerContext_1.EtDatePickerContext);
     const [selectedDate, setSelectedDate] = (0, react_1.useState)(value ? EthiopianDateUtils_1.EthiopianDate.toEth(value) : null);
-    const [hoveredEtDate, setHoveredEtDate] = (0, react_1.useState)(null);
     const getEtDate = (day) => {
         return { Day: day, Month: month, Year: year };
     };
@@ -81,15 +80,15 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
             month === (selectedDate === null || selectedDate === void 0 ? void 0 : selectedDate.Month) &&
             year === (selectedDate === null || selectedDate === void 0 ? void 0 : selectedDate.Year));
     };
-    const isRangeStart = (day) => {
+    const isDayRangeStart = (day) => {
         const currentDayGregorian = EthiopianDateUtils_1.EthiopianDate.toGreg(getEtDate(day));
         return !!(isRange && startDate && currentDayGregorian.getTime() === startDate.getTime());
     };
-    const isRangeEnd = (day) => {
+    const isDayRangeEnd = (day) => {
         const currentDayGregorian = EthiopianDateUtils_1.EthiopianDate.toGreg(getEtDate(day));
         return !!(isRange && endDate && currentDayGregorian.getTime() === endDate.getTime());
     };
-    const inRange = (day) => {
+    const isDayInRange = (day) => {
         if (!isRange || !startDate)
             return false;
         const currentDayGregorian = EthiopianDateUtils_1.EthiopianDate.toGreg(getEtDate(day));
@@ -140,54 +139,55 @@ const EthiopianDaysList = ({ month, year, isRange, startDate, endDate, }) => {
                     }
                     else {
                         setSelectedDate(getEtDate(day));
-                        onDateChange(currentDayGregorian);
+                        contextOnDateChange(currentDayGregorian);
                         setGregDate(currentDayGregorian);
                     }
-                    setHoveredEtDate(null); // Clear hovered date on selection
+                    if (setHoveredEtDate)
+                        setHoveredEtDate(null); // Clear hovered date on selection
                 }, onMouseEnter: () => {
-                    if (isRange && startDate && !endDate) {
+                    if (isRange && startDate && !endDate && setHoveredEtDate) {
                         setHoveredEtDate(getEtDate(day));
                     }
                 }, onMouseLeave: () => {
-                    if (isRange && startDate && !endDate) {
+                    if (isRange && startDate && !endDate && setHoveredEtDate) {
                         setHoveredEtDate(null);
                     }
                 }, sx: {
                     width: cellSize,
                     height: cellSize,
-                    backgroundColor: isRangeStart(day)
+                    backgroundColor: isDayRangeStart(day)
                         ? "primary.main"
-                        : isRangeEnd(day)
+                        : isDayRangeEnd(day)
                             ? "primary.main"
-                            : inRange(day)
+                            : isDayInRange(day)
                                 ? "action.selected"
                                 : isSelectedDate(day)
                                     ? "primary.dark"
                                     : "transparent",
-                    borderRadius: isRangeStart(day)
+                    borderRadius: isDayRangeStart(day)
                         ? "50% 0 0 50%"
-                        : isRangeEnd(day)
+                        : isDayRangeEnd(day)
                             ? "0 50% 50% 0"
-                            : inRange(day)
+                            : isDayInRange(day)
                                 ? "0"
                                 : "50%",
-                    color: isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
+                    color: isDayRangeStart(day) || isDayRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                     border: day === today.Day &&
                         month === today.Month &&
                         year === today.Year &&
                         !isSelectedDate(day) &&
-                        !isRangeStart(day) &&
-                        !isRangeEnd(day) &&
-                        !inRange(day)
+                        !isDayRangeStart(day) &&
+                        !isDayRangeEnd(day) &&
+                        !isDayInRange(day)
                         ? `1px solid ${today.Month === month && today.Year === year ? 'primary.main' : 'transparent'}`
                         : "none",
                     "&:hover": {
-                        backgroundColor: (isRangeStart(day) || isRangeEnd(day))
+                        backgroundColor: (isDayRangeStart(day) || isDayRangeEnd(day))
                             ? "primary.dark"
-                            : inRange(day)
+                            : isDayInRange(day)
                                 ? "action.hover"
                                 : undefined,
-                        color: isRangeStart(day) || isRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
+                        color: isDayRangeStart(day) || isDayRangeEnd(day) ? "white" : isSelectedDate(day) ? "white" : "black",
                     },
                 } },
                 react_1.default.createElement(material_1.Typography, { variant: "body2" }, day)));
