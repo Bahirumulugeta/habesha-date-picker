@@ -4,9 +4,6 @@
 
 A beautiful and culturally-aware Ethiopian calendar component built for modern React applications. Powered by **Material-UI**, `habesha-datepicker` simplifies date selection, supporting the Ethiopian calendar, Afan Oromo labels, and the Gregorian calendar.
 
-![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=1XHGNh8F578IB9fY5F6RRaC1TvFuSdDer)
-
----
 
 ## 🚀 Installation
 
@@ -61,7 +58,9 @@ function MyComponent() {
   );
 }
 ```
+![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=1oG1zswr8xCVq5Fyx2JAvi-Ih5utWF2bw)
 
+---
 ### Range Picker (Start → End)
 
 Need to select a date range? It's straightforward.
@@ -83,9 +82,10 @@ function MyRangeComponent() {
   );
 }
 ```
+![Habesha DatePicker Screenshot](https://drive.google.com/uc?export=view&id=19TAm4V71Mm-SFMrw0nsXhA_RB95Ahw7)
 
+---
 ## 🌍 Localization
-
 Since version 0.1.7, the date picker offers robust localization options:
 
 *   **GC** – Gregorian Calendar
